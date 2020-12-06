@@ -2,10 +2,17 @@ import torch
 import torch.nn as nn
 
 
+"""
+
+Création du model d'un réseau convolutionel avec deux convolutions et un feedforward (un enchaînement de couches denses).
+
+"""
+
+
 class LSTM(nn.Module):
     # On a qu'une seule variable d'entrée qui est le nombre de véhicules détectés sur un radar
 
-    def __init__(self, input_size=1, hidden_layer_size=100, sortie=1):
+    def __init__(self, input_size=1, hidden_layer_size=75, sortie=1):
 
         super().__init__()
         self.couche_cachee = hidden_layer_size
@@ -32,3 +39,24 @@ net = LSTM()
 criterion = nn.MSELoss()
 
 optimizer = torch.optim.Adam(net.parameters())
+
+
+"""
+
+Mise en place de la boucle d'apprentissage
+
+"""
+
+
+# Je mets le nombre d'epoch élevé quitte à me mettre en situation de surapprentissage
+for epoch in range(60):
+
+# A faire en fonction du data processing réalisé
+
+        optimizer.zero_grad()
+
+        # forward + backward + optimize
+        outputs = net(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
