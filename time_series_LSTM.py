@@ -23,10 +23,16 @@ class LSTM(nn.Module):
         self.fc2 = nn.Linear(75, 25)
         self.fc3 = nn.Linear(25, 1)
 
+    def reset_hidden_state(self):
+        self.hidden = (
+            torch.zeros(self.n_layers, self.seq_len, self.n_hidden),
+            torch.zeros(self.n_layers, self.seq_len, self.n_hidden)
+            )
+
     def forward():
+        lstm_out, self.hidden = self.lstm(input.view(len(input), self.batch_size, -1))
         # Après chaque couche, on utilise la fonction d'activation ReLu
-        x = F.relu(self.lstm(x))
-        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc1(lstm_out[-1].view(self.batch_size, -1)))
         x = F.relu(self.fc2(x))
         x = self.fc2(x)
         return 1
