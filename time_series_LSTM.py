@@ -28,7 +28,7 @@ class LSTM(nn.Module):
 
 
 net = LSTM()
-# Je choisis d'utiliser l'erreur quadratique moyenne comme criterion et l'optimize Adam (choix relativement arbitraire..)
+# Nous choisissons d'utiliser l'erreur quadratique moyenne comme criterion et l'optimize Adam (choix relativement arbitraire..)
 criterion = nn.MSELoss()
 
-optimizer = torch.optim.Adam(net.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(net.parameters())
