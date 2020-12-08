@@ -62,6 +62,10 @@ Nous avons ainsi décidé d'entraîner le réseau avec les données du radar nom
 Pour palier à ce léger manque, nous avons choisi de remplacer les valeurs manquantes par une régression linéaires entre les valeurs encadrant le laps de temps dont nous ignorons les mesures.
 Par exemple, ci dessous la représentation du volume de voitures détectées au mois d'août 2017, avant d'extrapoler les données manquantes, et après.
 
-
+![alt text](./images/lamar_sept_2017_rough_data.png)
+![alt text](./images/lamar_sept_2017_extrapolation.png)
 
 Dans un second temps, étant donné la répartition des données illustrées par l'histogramme ci-dessous, nous avons choisi de considérer un traffic par quart d'heure entre 0 et 1000, que nous avons ensuite normalisé entre 0 et 1.
+
+![alt text](./images/volume_repartition.png)
+![alt text](./images/volume_stats.png)
