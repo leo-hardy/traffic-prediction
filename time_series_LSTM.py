@@ -1,7 +1,11 @@
 import torch
 import torch.nn as nn
 
+"""
 
+Implementation de la sliding window
+
+"""
 """
 
 Création du model d'un réseau convolutionel avec deux convolutions et un feedforward (un enchaînement de couches denses).
