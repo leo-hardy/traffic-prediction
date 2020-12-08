@@ -1,11 +1,32 @@
 import torch
 import torch.nn as nn
-
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+import numpy as np
 """
 
 Implementation de la sliding window
 
 """
+#lecture des données
+data = pd.read_csv("../LAMAR BLVD.csv")
+
+
+#normalisation des donnees
+scaler = MinMaxScaler(feature_range=(-1, 1))
+train_data_normalized = scaler.fit_transform(data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"].to_numpy().reshape(-1, 1))
+train_data_normalized = train_data_normalized.reshape(1,-1)[0][:400]
+
+
+def createur_vecteur(sequence, pas):
+    seq=[]
+    for i in range(0,len(sequence)-pas-1):
+        seq.append((torch.FloatTensor(np.array([sequence[j] for j in range(i,i+pas)])),torch.FloatTensor(np.array(sequence[i+pas]))))
+    return seq
+
+
+print(createur_vecteur(train_data_normalized, 40))
+
 """
 
 Création du model d'un réseau convolutionel avec deux convolutions et un feedforward (un enchaînement de couches denses).
@@ -23,7 +44,7 @@ class LSTM(nn.Module):
         # définition du module lstm
         self.lstm = nn.LSTM(input_size, hidden_layer_size)
         # définition de le 3 couches denses en sorties du module LSTM
-        self.fc1 = nn.Linear(couche_cachee, 75)
+        self.fc1 = nn.Linear(self.couche_cachee, 75)
         self.fc2 = nn.Linear(75, 25)
         self.fc3 = nn.Linear(25, 1)
 
@@ -57,6 +78,7 @@ Mise en place de la boucle d'apprentissage
 
 """
 
+"""
 
 # Je mets le nombre d'epoch élevé quitte à me mettre en situation de surapprentissage
 for epoch in range(60):
@@ -70,3 +92,4 @@ for epoch in range(60):
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
+"""
