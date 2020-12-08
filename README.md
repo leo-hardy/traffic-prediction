@@ -22,22 +22,39 @@ Une fois les données nettoyées (espaces inutiles avant le nom des lieux), nous
 
 Voici le pourcentage de valeurs manquantes pour chacun des radars :
 100 BLK S CONGRESS AVE (Congress Bridge) 8.12%
+
 1000 BLK W CESAR CHAVEZ ST (H&B Trail Underpass) 8.41%
+
 1612 BLK S LAMAR BLVD (Collier) 23.7%
+
 2021 BLK KINNEY AVE (NW 300ft NW of Lamar) 81.0%
+
 3201 BLK S LAMAR BLVD (BROKEN SPOKE) 27.7%
+
 400 BLK AZIE MORTON RD (South of Barton Springs Rd) 22.0%
+
 700 BLK E CESAR CHAVEZ ST 8.62%
+
 BURNET RD / PALM WAY (IBM DRIVEWAY) 15.9%
+
 BURNET RD / RUTLAND DR 16.6%
+
 CAPITAL OF TEXAS HWY / CEDAR ST 36.3%
+
 CAPITAL OF TEXAS HWY / LAKEWOOD DR 11.1%
+
 CAPITAL OF TEXAS HWY / WALSH TARLTON LN 11.2%
+
 CONGRESS AVE / JOHANNA ST (Fulmore Middle School) 26.9%
+
 LAMAR BLVD / MANCHACA RD 10.7%
+
 LAMAR BLVD / N LAMAR SB TO W 15TH RAMP 24.1%
+
 **LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge) 4.35%**
+
 LAMAR BLVD / SHOAL CREEK BLVD 6.65%
+
 LAMAR BLVD / ZENNIA ST 33.6%
 
 Nous avons ainsi décidé d'entraîner le réseau avec les données du radar nommé "LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)", car le nombre de valeurs manquantes est faible.
