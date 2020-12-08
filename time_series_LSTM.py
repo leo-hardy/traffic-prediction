@@ -27,6 +27,7 @@ def createur_vecteur(sequence, pas):
 
 print(createur_vecteur(train_data_normalized, 40))
 
+
 """
 
 Création du model d'un réseau convolutionel avec deux convolutions et un feedforward (un enchaînement de couches denses).
@@ -37,25 +38,23 @@ Création du model d'un réseau convolutionel avec deux convolutions et un feedf
 class LSTM(nn.Module):
     # On a qu'une seule variable d'entrée qui est le nombre de véhicules détectés sur un radar
 
-    def __init__(self, input_size=1, hidden_layer_size=75, sortie=1):
+    def __init__(self, input_size=1, hidden_layer_size=75, output_size=1):
 
         super().__init__()
-        self.couche_cachee = hidden_layer_size
+        self.hidden_layer_size = hidden_layer_size
         # définition du module lstm
         self.lstm = nn.LSTM(input_size, hidden_layer_size)
         # définition de le 3 couches denses en sorties du module LSTM
-        self.fc1 = nn.Linear(self.couche_cachee, 75)
+        self.fc1 = nn.Linear(self.hidden_layer_size, 75)
         self.fc2 = nn.Linear(75, 25)
         self.fc3 = nn.Linear(25, 1)
 
-    def reset_hidden_state(self):
-        self.hidden = (
-            torch.zeros(self.n_layers, self.seq_len, self.n_hidden),
-            torch.zeros(self.n_layers, self.seq_len, self.n_hidden)
-            )
+        self.hidden_cell = (torch.zeros(1,1,self.hidden_layer_size),
+                            torch.zeros(1,1,self.hidden_layer_size))
 
-    def forward():
-        lstm_out, self.hidden = self.lstm(input.view(len(input), self.batch_size, -1))
+
+    def forward(self, input):
+        lstm_out, self.hidden = self.lstm(input.view(len(input), self.batch_size, -1), self.hidden_cell)
         # Après chaque couche, on utilise la fonction d'activation ReLu
         x = F.relu(self.fc1(lstm_out[-1].view(self.batch_size, -1)))
         x = F.relu(self.fc2(x))
