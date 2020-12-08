@@ -12,3 +12,39 @@ Bien que l'approche originale et les résultats présentés pertinents, nous avo
 
 Nous nous sommes alors résolu à emprunter une approche plus familière pour nous, dans l'optique d'avoir des résultats à moyen terme, qui pourront enrichir notre réflexion.
 Nous estimons donc qu'il est probablement plus judicieux de se contenir à la mise en place seulement d'un LSTM suivis de couches denses.
+
+
+## Data processing
+
+(Les graphiques suivant sont effectués avec la librairie matplotlib)
+
+Une fois les données nettoyées (espaces inutiles avant le nom des lieux), nous nous sommes posé la question de la complétion de l'information fournie. En d'autres termes, combien de mesure manque-t-il par radar dans l'intervalle de temps proposé, pour chaque radar ?
+
+Voici le pourcentage de valeurs manquantes pour chacun des radars :
+100 BLK S CONGRESS AVE (Congress Bridge) 8.12%
+1000 BLK W CESAR CHAVEZ ST (H&B Trail Underpass) 8.41%
+1612 BLK S LAMAR BLVD (Collier) 23.7%
+2021 BLK KINNEY AVE (NW 300ft NW of Lamar) 81.0%
+3201 BLK S LAMAR BLVD (BROKEN SPOKE) 27.7%
+400 BLK AZIE MORTON RD (South of Barton Springs Rd) 22.0%
+700 BLK E CESAR CHAVEZ ST 8.62%
+BURNET RD / PALM WAY (IBM DRIVEWAY) 15.9%
+BURNET RD / RUTLAND DR 16.6%
+CAPITAL OF TEXAS HWY / CEDAR ST 36.3%
+CAPITAL OF TEXAS HWY / LAKEWOOD DR 11.1%
+CAPITAL OF TEXAS HWY / WALSH TARLTON LN 11.2%
+CONGRESS AVE / JOHANNA ST (Fulmore Middle School) 26.9%
+LAMAR BLVD / MANCHACA RD 10.7%
+LAMAR BLVD / N LAMAR SB TO W 15TH RAMP 24.1%
+**LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge) 4.35%**
+LAMAR BLVD / SHOAL CREEK BLVD 6.65%
+LAMAR BLVD / ZENNIA ST 33.6%
+
+Nous avons ainsi décidé d'entraîner le réseau avec les données du radar nommé "LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)", car le nombre de valeurs manquantes est faible.
+
+Pour palier à ce léger manque, nous avons choisi de remplacer les valeurs manquantes par une régression linéaires entre les valeurs encadrant le laps de temps dont nous ignorons les mesures.
+Par exemple, ci dessous la représentation du volume de voitures détectées au mois d'août 2017, avant d'extrapoler les données manquantes, et après.
+
+
+
+Dans un second temps, étant donné la répartition des données illustrées par l'histogramme ci-dessous, nous avons choisi de considérer un traffic par quart d'heure entre 0 et 1000, que nous avons ensuite normalisé entre 0 et 1.
