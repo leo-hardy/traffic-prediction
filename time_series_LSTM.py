@@ -1,8 +1,12 @@
 import torch
 import torch.nn as nn
 import pandas as pd
+import torch.nn.functional as F
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
+
+
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 """
 
@@ -26,7 +30,7 @@ def createur_vecteur(sequence, pas):
     return seq
 
 
-print(createur_vecteur(train_data_normalized, 40))
+train_seq = createur_vecteur(train_data_normalized, 50)
 
 
 """
@@ -39,14 +43,14 @@ Création du model d'un réseau convolutionel avec deux convolutions et un feedf
 class LSTM(nn.Module):
     # On a qu'une seule variable d'entrée qui est le nombre de véhicules détectés sur un radar
 
-    def __init__(self, input_size=1, hidden_layer_size=64, output_size=1):
+    def __init__(self, input_size=1, hidden_layer_size=80, output_size=1):
 
         super().__init__()
         self.hidden_layer_size = hidden_layer_size
-        # définition du module lstm
-        self.lstm = nn.LSTM(input_size, hidden_layer_size)
+        # définition du module lstm à un seul bloc
+        self.lstm = nn.LSTM(input_size=input_size, num_layers=1, hidden_size= self.hidden_layer_size)
         # définition de le 3 couches denses en sorties du module LSTM
-        self.fc1 = nn.Linear(self.hidden_layer_size, 68)
+        self.fc1 = nn.Linear(self.hidden_layer_size, 64)
         self.fc2 = nn.Linear(64, 32)
         self.fc3 = nn.Linear(32, 1)
 
@@ -55,13 +59,20 @@ class LSTM(nn.Module):
 
 
     def forward(self, input):
-        lstm_out, self.hidden = self.lstm(input.view(len(input), self.batch_size, -1), self.hidden_cell)
+        lstm_out, self.hidden_cell = self.lstm(input.view(len(input), 1, -1), self.hidden_cell)
         # Après chaque couche, on utilise la fonction d'activation ReLu
-        x = F.relu(self.fc1(lstm_out[-1].view(len(input), -1)))
+        #on extrait la derniere couche h_t_finale.
+
+        x = F.relu(self.fc1(lstm_out[-1].view(self.hidden_layer_size, -1)))
         x = F.relu(self.fc2(x))
         x = self.fc2(x)
-        return 1
+        return x
 
+    def reset_hidden_state(self):
+        self.hidden_cell = (
+            torch.zeros(1, 1, self.hidden_layer_size),
+            torch.zeros(1, 1, self.hidden_layer_size)
+        )
 
 
 
@@ -76,96 +87,73 @@ optimizer = torch.optim.Adam(net.parameters())
 Mise en place de la boucle d'apprentissage
 
 """
+num_epochs = 1
+""" Besoin de desordonner les données du train set """
 
-
-
-
-
-"""
-
-# Je mets le nombre d'epoch élevé quitte à me mettre en situation de surapprentissage
-for epoch in range(60):
-
-# A faire en fonction du data processing réalisé
-
-        optimizer.zero_grad()
-
-        # forward + backward + optimize
-        outputs = net(inputs)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
-"""
-
-'''
-### THE LOOP
-
-# Lists for visualization of loss and accuracy 
+# Lists for visualization of loss and accuracy
 loss_list = []
 iteration_list = []
 errors_test_set_list = []
 
 for epoch in range(num_epochs):
-    for traffic_previous, traffic_real in train_loader:
+    for traffic_previous, traffic_real in train_seq:
 
         # Transfering images and labels to GPU if available
         traffic_previous, traffic_real = traffic_previous.to(device), traffic_real.to(device)
-        
-        # it can change for the last batch !
-        batch_size = traffic_previous.size()[0]
-        
-        train = Variable( traffic_previous.view( batch_size, 1, ?, ? ) )
-        traffic_real = Variable( traffic_real )
-        
-        # Forward pass
-        outputs = torch.round( 20* net( train ) ) /20
-        
-        loss = criterion( outputs, traffic_real )
-        
+
         # Initializing a gradient as 0 so there is no mixing of gradient among the batches
         optimizer.zero_grad()
-        
+        net.reset_hidden_state()
+
+        traffic_predicted = net(traffic_previous)
+
+
+
+
+        loss = criterion( traffic_predicted, traffic_real )
+
+
         #Propagating the error backward
         loss.backward()
-        
+
         # Optimizing the parameters
         optimizer.step()
-    
+        print("finish")
+"""
         count += 1
-    
-    # Testing the model
-    
+        # Testing the model
+
         if not ( count % 100 ):
             total = 0
             err = 0
-            
+
             test_count = 0
-        
+
             for traffic_previous, traffic_real in test_loader:
-                
+
                 traffic_previous, traffic_real = traffic_previous.to(device), traffic_real.to(device)
                 labels_list.append( traffic_real )
-                
+
                 # it can change for the last batch !
                 batch_size = traffic_previous.size()[0]
-                
+
                 test = Variable( traffic_previous.view(batch_size, 1, ?, ?) )
                 # we want int values for sales but we got [0, 1] values in nn
                 outputs = torch.round( net( train ) )
-            
+
                 # root mean square error
                 err += criterion( )
-                
+
                 #print("err", err)
                 total += len( traffic_real )
-                
 
-            
+
+
             errors_test_set = np.true_divide( err.detach().numpy() , total) ?
             loss_list.append(loss.data)
             iteration_list.append(count)
             errors_test_set_list.append(errors_test_set)
-        
+
         if not (count % 100):
             print("Iteration: {}, Loss: {}, errors_test_set: {} /(item, shop)".format(count, loss.data, errors_test_set))
 
@@ -176,4 +164,4 @@ plt.xlabel("No. of Iteration")
 plt.ylabel("errors_test_set")
 plt.title("Iterations vs errors_test_set, lr=%s, batch size=%s, %s epochs"%(learning_rate, batch_size, num_epochs))
 plt.show()
-'''
+"""
