@@ -3,6 +3,7 @@ import torch.nn as nn
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
+
 """
 
 Implementation de la sliding window
@@ -56,7 +57,7 @@ class LSTM(nn.Module):
     def forward(self, input):
         lstm_out, self.hidden = self.lstm(input.view(len(input), self.batch_size, -1), self.hidden_cell)
         # Après chaque couche, on utilise la fonction d'activation ReLu
-        x = F.relu(self.fc1(lstm_out[-1].view(self.batch_size, -1)))
+        x = F.relu(self.fc1(lstm_out[-1].view(len(input), -1)))
         x = F.relu(self.fc2(x))
         x = self.fc2(x)
         return 1
@@ -76,6 +77,10 @@ optimizer = torch.optim.Adam(net.parameters())
 Mise en place de la boucle d'apprentissage
 
 """
+
+
+
+
 
 """
 
