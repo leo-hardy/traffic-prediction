@@ -39,16 +39,16 @@ Création du model d'un réseau convolutionel avec deux convolutions et un feedf
 class LSTM(nn.Module):
     # On a qu'une seule variable d'entrée qui est le nombre de véhicules détectés sur un radar
 
-    def __init__(self, input_size=1, hidden_layer_size=75, output_size=1):
+    def __init__(self, input_size=1, hidden_layer_size=64, output_size=1):
 
         super().__init__()
         self.hidden_layer_size = hidden_layer_size
         # définition du module lstm
         self.lstm = nn.LSTM(input_size, hidden_layer_size)
         # définition de le 3 couches denses en sorties du module LSTM
-        self.fc1 = nn.Linear(self.hidden_layer_size, 75)
-        self.fc2 = nn.Linear(75, 25)
-        self.fc3 = nn.Linear(25, 1)
+        self.fc1 = nn.Linear(self.hidden_layer_size, 68)
+        self.fc2 = nn.Linear(64, 32)
+        self.fc3 = nn.Linear(32, 1)
 
         self.hidden_cell = (torch.zeros(1,1,self.hidden_layer_size),
                             torch.zeros(1,1,self.hidden_layer_size))
