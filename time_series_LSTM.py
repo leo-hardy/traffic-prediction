@@ -68,7 +68,6 @@ class LSTM(nn.Module):
 net = LSTM()
 # Nous choisissons d'utiliser l'erreur quadratique moyenne comme criterion et l'optimize Adam (choix relativement arbitraire..)
 criterion = nn.MSELoss()
-
 optimizer = torch.optim.Adam(net.parameters())
 
 
@@ -97,3 +96,84 @@ for epoch in range(60):
         loss.backward()
         optimizer.step()
 """
+
+'''
+### THE LOOP
+
+# Lists for visualization of loss and accuracy 
+loss_list = []
+iteration_list = []
+errors_test_set_list = []
+
+for epoch in range(num_epochs):
+    for traffic_previous, traffic_real in train_loader:
+
+        # Transfering images and labels to GPU if available
+        traffic_previous, traffic_real = traffic_previous.to(device), traffic_real.to(device)
+        
+        # it can change for the last batch !
+        batch_size = traffic_previous.size()[0]
+        
+        train = Variable( traffic_previous.view( batch_size, 1, ?, ? ) )
+        traffic_real = Variable( traffic_real )
+        
+        # Forward pass
+        outputs = torch.round( 20* net( train ) ) /20
+        
+        loss = criterion( outputs, traffic_real )
+        
+        # Initializing a gradient as 0 so there is no mixing of gradient among the batches
+        optimizer.zero_grad()
+        
+        #Propagating the error backward
+        loss.backward()
+        
+        # Optimizing the parameters
+        optimizer.step()
+    
+        count += 1
+    
+    # Testing the model
+    
+        if not ( count % 100 ):
+            total = 0
+            err = 0
+            
+            test_count = 0
+        
+            for traffic_previous, traffic_real in test_loader:
+                
+                traffic_previous, traffic_real = traffic_previous.to(device), traffic_real.to(device)
+                labels_list.append( traffic_real )
+                
+                # it can change for the last batch !
+                batch_size = traffic_previous.size()[0]
+                
+                test = Variable( traffic_previous.view(batch_size, 1, ?, ?) )
+                # we want int values for sales but we got [0, 1] values in nn
+                outputs = torch.round( net( train ) )
+            
+                # root mean square error
+                err += criterion( )
+                
+                #print("err", err)
+                total += len( traffic_real )
+                
+
+            
+            errors_test_set = np.true_divide( err.detach().numpy() , total) ?
+            loss_list.append(loss.data)
+            iteration_list.append(count)
+            errors_test_set_list.append(errors_test_set)
+        
+        if not (count % 100):
+            print("Iteration: {}, Loss: {}, errors_test_set: {} /(item, shop)".format(count, loss.data, errors_test_set))
+
+
+
+plt.plot(iteration_list, errors_test_set_list)
+plt.xlabel("No. of Iteration")
+plt.ylabel("errors_test_set")
+plt.title("Iterations vs errors_test_set, lr=%s, batch size=%s, %s epochs"%(learning_rate, batch_size, num_epochs))
+plt.show()
+'''
