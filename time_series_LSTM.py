@@ -46,7 +46,7 @@ class LSTM(nn.Module):
         # définition du module lstm
         self.lstm = nn.LSTM(input_size, hidden_layer_size)
         # définition de le 3 couches denses en sorties du module LSTM
-        self.fc1 = nn.Linear(self.hidden_layer_size, 68)
+        self.fc1 = nn.Linear(self.hidden_layer_size, 64)
         self.fc2 = nn.Linear(64, 32)
         self.fc3 = nn.Linear(32, 1)
 
