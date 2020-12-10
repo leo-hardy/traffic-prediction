@@ -1,5 +1,12 @@
 # traffic-prediction
 
+Paul Lecomte, Léo Hardy
+
+Ce git résume le projet effectué lors du [cours de Machine Learning de M.Cristophe Cerisara](https://members.loria.fr/CCerisara/#courses/machine_learning/).
+
+L'objectif est d'effectuer une prévision de traffic pour la ville d'Austin, à l'aide des données des radars de la ville, [disponibles sur ce challenge kaggle.](https://www.kaggle.com/vinayshanbhag/radar-traffic-data)
+
+A l'intention de M.Cerisara : le nombre de commit de chacun de nous deux n'est pas forcément représentatif de nos travaux respectifs étant donné que nous avons travaillé et réfléchi à deux sur la même machine à de nombreux moments.
 
 ## Etat de l'art et motivation de l'approche choisie
 
