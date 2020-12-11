@@ -32,7 +32,6 @@ def createur_vecteur(sequence, pas):
 
 train_seq = createur_vecteur(train_data_normalized, 50)
 
-
 """
 
 Création du model d'un réseau convolutionel avec deux convolutions et un feedforward (un enchaînement de couches denses).
@@ -50,22 +49,22 @@ class LSTM(nn.Module):
         # définition du module lstm à un seul bloc
         self.lstm = nn.LSTM(input_size=input_size, num_layers=1, hidden_size= self.hidden_layer_size)
         # définition de le 3 couches denses en sorties du module LSTM
-        self.fc1 = nn.Linear(self.hidden_layer_size, 64)
-        self.fc2 = nn.Linear(64, 32)
-        self.fc3 = nn.Linear(32, 1)
+        self.fc1 = nn.Linear( in_features=input_size, out_features=64 )
+        self.fc2 = nn.Linear( 64, 32)
+        self.fc3 = nn.Linear( 32, 1)
 
         self.hidden_cell = (torch.zeros(1,1,self.hidden_layer_size),
                             torch.zeros(1,1,self.hidden_layer_size))
 
 
     def forward(self, input):
-        lstm_out, self.hidden_cell = self.lstm(input.view(len(input), 1, -1), self.hidden_cell)
+        lstm_out, self.hidden_cell = self.lstm( input.view( len(input), 1, -1 ), self.hidden_cell )
         # Après chaque couche, on utilise la fonction d'activation ReLu
-        #on extrait la derniere couche h_t_finale.
-
-        x = F.relu(self.fc1(lstm_out[-1].view(self.hidden_layer_size, -1)))
-        x = F.relu(self.fc2(x))
-        x = self.fc2(x)
+        # on extrait la derniere couche h_t_finale.
+        x = lstm_out[-1].view( self.hidden_layer_size, -1)
+        x = F.relu( self.fc1( x ))
+        x = F.relu( self.fc2( x ))
+        x = self.fc3( x )
         return x
 
     def reset_hidden_state(self):
@@ -118,7 +117,7 @@ for epoch in range(num_epochs):
 
         # Optimizing the parameters
         optimizer.step()
-        print("finish")
+    print("finish")
 """
         count += 1
         # Testing the model
