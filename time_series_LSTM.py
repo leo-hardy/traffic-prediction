@@ -22,7 +22,7 @@ scaler = MinMaxScaler( feature_range=(-1, 1) )
 train_data_normalized = scaler.fit_transform(data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"].to_numpy().reshape(-1, 1))
 train_data_normalized = train_data_normalized.reshape(1,-1)[0][:400]
 
-
+# cette fonction permet de
 def createur_vecteur(sequence, pas):
     seq=[]
     for i in range(0,len(sequence)-pas-1):
@@ -53,7 +53,7 @@ class LSTM(nn.Module):
         self.fc2 = nn.Linear( in_features=64, out_features=32)
         self.fc3 = nn.Linear( in_features=32, out_features=1)
 
-        self.hidden_cell = ( 
+        self.hidden_cell = (
             torch.zeros( 1, 1, self.hidden_layer_size ),
             torch.zeros( 1, 1, self.hidden_layer_size )
         )
@@ -90,7 +90,7 @@ optimizer = torch.optim.Adam( net.parameters() )
 Mise en place de la boucle d'apprentissage
 
 """
-num_epochs = 1
+num_epochs = 2
 """ Besoin de desordonner les données du train set """
 
 # Lists for visualization of loss and accuracy
@@ -119,7 +119,7 @@ for epoch in range( num_epochs ):
 
         # Optimizing the parameters
         optimizer.step()
-    print("finish")
+        print("finish", loss.item())
 """
         count += 1
         # Testing the model
