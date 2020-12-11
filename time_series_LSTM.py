@@ -18,7 +18,7 @@ data = pd.read_csv("../LAMAR BLVD.csv")
 
 
 #normalisation des donnees
-scaler = MinMaxScaler(feature_range=(-1, 1))
+scaler = MinMaxScaler( feature_range=(-1, 1) )
 train_data_normalized = scaler.fit_transform(data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"].to_numpy().reshape(-1, 1))
 train_data_normalized = train_data_normalized.reshape(1,-1)[0][:400]
 
@@ -47,14 +47,16 @@ class LSTM(nn.Module):
         super().__init__()
         self.hidden_layer_size = hidden_layer_size
         # définition du module lstm à un seul bloc
-        self.lstm = nn.LSTM(input_size=input_size, num_layers=1, hidden_size= self.hidden_layer_size)
+        self.lstm = nn.LSTM( input_size=input_size, num_layers=1, hidden_size=self.hidden_layer_size )
         # définition de le 3 couches denses en sorties du module LSTM
         self.fc1 = nn.Linear( in_features=input_size, out_features=64 )
-        self.fc2 = nn.Linear( 64, 32)
-        self.fc3 = nn.Linear( 32, 1)
+        self.fc2 = nn.Linear( in_features=64, out_features=32)
+        self.fc3 = nn.Linear( in_features=32, out_features=1)
 
-        self.hidden_cell = (torch.zeros(1,1,self.hidden_layer_size),
-                            torch.zeros(1,1,self.hidden_layer_size))
+        self.hidden_cell = ( 
+            torch.zeros( 1, 1, self.hidden_layer_size ),
+            torch.zeros( 1, 1, self.hidden_layer_size )
+        )
 
 
     def forward(self, input):
@@ -62,9 +64,9 @@ class LSTM(nn.Module):
         # Après chaque couche, on utilise la fonction d'activation ReLu
         # on extrait la derniere couche h_t_finale.
         x = lstm_out[-1].view( self.hidden_layer_size, -1)
-        x = F.relu( self.fc1( x ))
-        x = F.relu( self.fc2( x ))
-        x = self.fc3( x )
+        x = F.relu( self.fc1( x )) # POURQUOI UN RELU ICI ?
+        x = F.relu( self.fc2( x )) # POURQUOI UN RELU ICI ?
+        x = self.fc3( x ) # POURQUOI PAS UN RELU ICI ?
         return x
 
     def reset_hidden_state(self):
@@ -78,7 +80,7 @@ class LSTM(nn.Module):
 net = LSTM()
 # Nous choisissons d'utiliser l'erreur quadratique moyenne comme criterion et l'optimize Adam (choix relativement arbitraire..)
 criterion = nn.MSELoss()
-optimizer = torch.optim.Adam(net.parameters())
+optimizer = torch.optim.Adam( net.parameters() )
 
 
 """
@@ -94,7 +96,7 @@ loss_list = []
 iteration_list = []
 errors_test_set_list = []
 
-for epoch in range(num_epochs):
+for epoch in range( num_epochs ):
     for traffic_previous, traffic_real in train_seq:
 
         # Transfering images and labels to GPU if available
@@ -104,13 +106,9 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
         net.reset_hidden_state()
 
-        traffic_predicted = net(traffic_previous)
-
-
-
+        traffic_predicted = net( traffic_previous )
 
         loss = criterion( traffic_predicted, traffic_real )
-
 
         #Propagating the error backward
         loss.backward()
