@@ -22,7 +22,7 @@ data = pd.read_csv("../LAMAR BLVD.csv")
 #normalisation des donnees
 scaler = MinMaxScaler( feature_range=(-1, 1) )
 train_data_normalized = scaler.fit_transform( data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"].to_numpy().reshape(-1, 1) )
-train_data_normalized = train_data_normalized.reshape(1,-1)[0][:400]
+train_data_normalized = train_data_normalized.reshape(1,-1)[0][:2500]
 
 # length of the window for training, it is the number of previous quarter-hours from which the net learns
 window_length = 50
@@ -36,7 +36,7 @@ def createur_vecteur(sequence, pas):
 
 
 radar_sequences = createur_vecteur( train_data_normalized, window_length )
-train_seq, test_seq = train_test_split( radar_sequences, test_size=0.2 )
+train_seq, test_seq = train_test_split( radar_sequences, test_size=300 )
 
 
 """
@@ -137,11 +137,11 @@ for epoch in range( num_epochs ):
                 traffic_previous, traffic_real = traffic_previous.to(device), traffic_real.to(device)
 
                 # we want int values for sales but we got [0, 1] values in nn
-                traffic_predicted = net( traffic_previous ) # inverse scaler here
+                traffic_real = scaler.inverse_transform( traffic_real.reshape(-1, 1) )
+                traffic_predicted = scaler.inverse_transform( net( traffic_previous ).detach().numpy() )
 
                 # root mean square error
-                err += criterion( traffic_predicted[0][0], traffic_real )
-
+                err += np.sqrt( criterion( torch.FloatTensor(traffic_predicted[0]), torch.FloatTensor(traffic_real[0]) ) )
 
             errors_test_set = np.true_divide( err.detach().numpy() , len( test_seq ))
             iteration_list.append( count )
