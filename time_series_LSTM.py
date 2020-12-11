@@ -3,7 +3,9 @@ import torch.nn as nn
 import pandas as pd
 import torch.nn.functional as F
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -19,9 +21,12 @@ data = pd.read_csv("../LAMAR BLVD.csv")
 
 #normalisation des donnees
 scaler = MinMaxScaler( feature_range=(-1, 1) )
-train_data_normalized = scaler.fit_transform(data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"].to_numpy().reshape(-1, 1))
+train_data_normalized = scaler.fit_transform( data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"].to_numpy().reshape(-1, 1) )
 train_data_normalized = train_data_normalized.reshape(1,-1)[0][:400]
 
+# length of the window for training, it is the number of previous quarter-hours from which the net learns
+window_length = 50
+batch_size = 1
 
 def createur_vecteur(sequence, pas):
     seq=[]
@@ -30,7 +35,9 @@ def createur_vecteur(sequence, pas):
     return seq
 
 
-train_seq = createur_vecteur(train_data_normalized, 50)
+radar_sequences = createur_vecteur( train_data_normalized, window_length )
+train_seq, test_seq = train_test_split( radar_sequences, test_size=0.2 )
+
 
 """
 
@@ -98,6 +105,7 @@ loss_list = []
 iteration_list = []
 errors_test_set_list = []
 
+count = 0
 for epoch in range( num_epochs ):
     for traffic_previous, traffic_real in train_seq:
 
@@ -109,8 +117,6 @@ for epoch in range( num_epochs ):
         net.reset_hidden_state()
 
         traffic_predicted = net( traffic_previous )
-        """        print("traffic_predicted", traffic_predicted.size(), traffic_predicted[0], traffic_predicted[0][0] )
-        print("traffic_real", traffic_real)"""
 
         loss = criterion( traffic_predicted[0][0], traffic_real )
 
@@ -119,50 +125,33 @@ for epoch in range( num_epochs ):
 
         # Optimizing the parameters
         optimizer.step()
-    print("finish")
-"""
-        count += 1
-        # Testing the model
 
+        count += 1
+
+        # Testing the model
         if not ( count % 100 ):
-            total = 0
             err = 0
 
-            test_count = 0
-
-            for traffic_previous, traffic_real in test_loader:
+            for traffic_previous, traffic_real in test_seq:
 
                 traffic_previous, traffic_real = traffic_previous.to(device), traffic_real.to(device)
-                labels_list.append( traffic_real )
 
-                # it can change for the last batch !
-                batch_size = traffic_previous.size()[0]
-
-                test = Variable( traffic_previous.view(batch_size, 1, ?, ?) )
                 # we want int values for sales but we got [0, 1] values in nn
-                outputs = torch.round( net( train ) )
+                traffic_predicted = net( traffic_previous ) # inverse scaler here
 
                 # root mean square error
-                err += criterion( )
-
-                #print("err", err)
-                total += len( traffic_real )
+                err += criterion( traffic_predicted[0][0], traffic_real )
 
 
+            errors_test_set = np.true_divide( err.detach().numpy() , len( test_seq ))
+            iteration_list.append( count )
+            errors_test_set_list.append( errors_test_set )
 
-            errors_test_set = np.true_divide( err.detach().numpy() , total) ?
-            loss_list.append(loss.data)
-            iteration_list.append(count)
-            errors_test_set_list.append(errors_test_set)
-
-        if not (count % 100):
-            print("Iteration: {}, Loss: {}, errors_test_set: {} /(item, shop)".format(count, loss.data, errors_test_set))
+            print("Iteration: {}, Loss: {}, errors_test_set: {} /(item, shop)".format( count, loss.data, errors_test_set ))
 
 
-
-plt.plot(iteration_list, errors_test_set_list)
-plt.xlabel("No. of Iteration")
-plt.ylabel("errors_test_set")
-plt.title("Iterations vs errors_test_set, lr=%s, batch size=%s, %s epochs"%(learning_rate, batch_size, num_epochs))
+plt.plot( iteration_list, errors_test_set_list )
+plt.xlabel( "No. of Iteration" )
+plt.ylabel( "errors_test_set" )
+plt.title( "Iterations vs errors_test_set, batch size=%s, %s epochs" % ( batch_size, num_epochs ))
 plt.show()
-"""
