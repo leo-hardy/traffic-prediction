@@ -4,6 +4,7 @@ import pandas as pd
 import torch.nn.functional as F
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -13,16 +14,16 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 Implementation de la sliding window
 
 """
-#lecture des données
+# lecture des données
 data = pd.read_csv("../LAMAR BLVD.csv")
 
 
-#normalisation des donnees
+# normalisation des donnees entre -1 et 1 en utilisant la fonction MinMaxScaler de la librairie sklearn
 scaler = MinMaxScaler( feature_range=(-1, 1) )
 train_data_normalized = scaler.fit_transform(data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"].to_numpy().reshape(-1, 1))
-train_data_normalized = train_data_normalized.reshape(1,-1)[0][:400]
+train_data_normalized = train_data_normalized.reshape(1,-1)[0][:900]
 
-# cette fonction permet de
+# cette fonction permet de creer une fenetre de valeur avec le label associé.
 def createur_vecteur(sequence, pas):
     seq=[]
     for i in range(0,len(sequence)-pas-1):
@@ -90,7 +91,7 @@ optimizer = torch.optim.Adam( net.parameters() )
 Mise en place de la boucle d'apprentissage
 
 """
-num_epochs = 2
+num_epochs = 200
 """ Besoin de desordonner les données du train set """
 
 # Lists for visualization of loss and accuracy
@@ -119,7 +120,10 @@ for epoch in range( num_epochs ):
 
         # Optimizing the parameters
         optimizer.step()
-        print("finish", loss.item())
+    print("finish", loss.item())
+    loss_list.append(loss.item())
+plt.plot([i for i in range( num_epochs )], loss_list)
+plt.show()
 """
         count += 1
         # Testing the model
