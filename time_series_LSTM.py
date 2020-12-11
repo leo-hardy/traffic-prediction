@@ -60,14 +60,12 @@ class LSTM(nn.Module):
 
 
     def forward(self, input):
-        """print( 'input', input.size() )
-        print( 'input.view( len(input), 1, -1 )', input.view( len(input), 1, -1 ).size() )"""
 
         lstm_out, self.hidden_cell = self.lstm( input.view( len(input), 1, -1 ), self.hidden_cell )
         # Après chaque couche, on utilise la fonction d'activation ReLu
         # on extrait la derniere couche h_t_finale.
-        x = lstm_out[-1].view( self.hidden_layer_size, -1)
-        """print( "x", x.size() )"""
+
+        x = lstm_out[-1].view( -1, self.hidden_layer_size )
         x = F.relu( self.fc1( x )) # POURQUOI UN RELU ICI ?
         x = F.relu( self.fc2( x )) # POURQUOI UN RELU ICI ?
         x = self.fc3( x ) # POURQUOI PAS UN RELU ICI ?
@@ -111,8 +109,10 @@ for epoch in range( num_epochs ):
         net.reset_hidden_state()
 
         traffic_predicted = net( traffic_previous )
+        """        print("traffic_predicted", traffic_predicted.size(), traffic_predicted[0], traffic_predicted[0][0] )
+        print("traffic_real", traffic_real)"""
 
-        loss = criterion( traffic_predicted, traffic_real )
+        loss = criterion( traffic_predicted[0][0], traffic_real )
 
         #Propagating the error backward
         loss.backward()
