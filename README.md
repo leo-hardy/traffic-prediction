@@ -21,6 +21,9 @@ Nous nous sommes alors résolu à emprunter une approche plus familière pour no
 Nous estimons donc qu'il est probablement plus judicieux de se contenir à la mise en place seulement d'un LSTM suivis de couches denses.
 
 
+Dans le but d'obtenir rapidement des résultats sur lesquels nous baser pour améliorer notre démarche, nous avons décidé de créer un modèle qui apprennent sur un seul radar dans un premier temps.
+
+
 ## Data processing
 
 (Les graphiques suivant sont effectués avec la librairie matplotlib)
@@ -62,3 +65,16 @@ Dans un second temps, étant donné la répartition des données illustrées par
 
 ![volume_repartition](./images/volume_repartition.png)
 ![volume_stats](./images/volume_stats.png)
+
+## Optimisation des hyper-paramètres
+
+### taille de la sliding window
+
+Le modèle se base sur les n quart-d'heures précédant la valeur à prédire. Quel est la taille optimale de cette durée ?
+
+
+## Pistes d'amélioration
+
+- interpoler les données manquantes avec le réseau entraîné
+
+- apprendre sur plusieurs radars

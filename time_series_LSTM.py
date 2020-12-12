@@ -3,11 +3,25 @@ import torch.nn as nn
 import pandas as pd
 import torch.nn.functional as F
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
 import numpy as np
 import matplotlib.pyplot as plt
 
+import time
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+
+"""
+HYPERPARAMETERS:
+
+taille de la sliding window
+batch_size (minibatch ?)
+num_epochs
+Tip 3: Tune batch size and learning rate after tuning all other hyperparameters.
+"""
+
+
 
 """
 
@@ -15,13 +29,21 @@ Implementation de la sliding window
 
 """
 # lecture des données
+start_time = time.time()
+
 data = pd.read_csv("../LAMAR BLVD.csv")
 
 
 # normalisation des donnees entre -1 et 1 en utilisant la fonction MinMaxScaler de la librairie sklearn
 scaler = MinMaxScaler( feature_range=(-1, 1) )
-train_data_normalized = scaler.fit_transform(data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"].to_numpy().reshape(-1, 1))
-train_data_normalized = train_data_normalized.reshape(1,-1)[0][:900]
+train_data_normalized = scaler.fit_transform( data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"].to_numpy().reshape(-1, 1) )
+train_data_normalized = train_data_normalized.reshape(1,-1)[0][:5000]
+
+# length of the window for training, it is the number of previous quarter-hours from which the net learns
+window_length = 4*2
+batch_size = 1
+print( 'hyperparameters : window_length = %s hours' % (window_length/4) )
+
 
 # cette fonction permet de creer une fenetre de valeur avec le label associé.
 def createur_vecteur(sequence, pas):
@@ -31,7 +53,11 @@ def createur_vecteur(sequence, pas):
     return seq
 
 
-train_seq = createur_vecteur(train_data_normalized, 50)
+radar_sequences = createur_vecteur( train_data_normalized, window_length )
+train_seq, test_seq = train_test_split( radar_sequences, test_size=300 )
+
+data_time = time.time()
+print('training and testing set preparation took %s seconds' % (data_time-start_time) )
 
 """
 
@@ -82,6 +108,9 @@ net = LSTM()
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam( net.parameters() )
 
+model_time = time.time()
+print('model creation took %s seconds' % (model_time-data_time) )
+
 
 """
 
@@ -95,7 +124,9 @@ num_epochs = 200
 loss_list = []
 iteration_list = []
 errors_test_set_list = []
+duration_test_list = []
 
+count = 0
 for epoch in range( num_epochs ):
     for traffic_previous, traffic_real in train_seq:
 
@@ -107,8 +138,6 @@ for epoch in range( num_epochs ):
         net.reset_hidden_state()
 
         traffic_predicted = net( traffic_previous )
-        """        print("traffic_predicted", traffic_predicted.size(), traffic_predicted[0], traffic_predicted[0][0] )
-        print("traffic_real", traffic_real)"""
 
         loss = criterion( traffic_predicted[0][0], traffic_real )
 
@@ -117,51 +146,37 @@ for epoch in range( num_epochs ):
 
         # Optimizing the parameters
         optimizer.step()
-    print("finish")
 
-"""
+
         count += 1
-        # Testing the model
 
+        # Testing the model
         if not ( count % 100 ):
-            total = 0
+            t1 = time.time()
             err = 0
 
-            test_count = 0
-
-            for traffic_previous, traffic_real in test_loader:
+            for traffic_previous, traffic_real in test_seq:
 
                 traffic_previous, traffic_real = traffic_previous.to(device), traffic_real.to(device)
-                labels_list.append( traffic_real )
 
-                # it can change for the last batch !
-                batch_size = traffic_previous.size()[0]
-
-                test = Variable( traffic_previous.view(batch_size, 1, ?, ?) )
                 # we want int values for sales but we got [0, 1] values in nn
-                outputs = torch.round( net( train ) )
+                traffic_real = scaler.inverse_transform( traffic_real.reshape(-1, 1) )
+                traffic_predicted = scaler.inverse_transform( net( traffic_previous ).detach().numpy() )
 
                 # root mean square error
-                err += criterion( )
+                err += np.sqrt( criterion( torch.FloatTensor(traffic_predicted[0]), torch.FloatTensor(traffic_real[0]) ) )
 
-                #print("err", err)
-                total += len( traffic_real )
+            errors_test_set = np.true_divide( err.detach().numpy() , len( test_seq ))
+            iteration_list.append( count )
+            errors_test_set_list.append( errors_test_set )
+            duration_test_list.append( time.time() - t1 )
 
+            print("Iteration: {}, errors_test_set: {} /(quarter hour)".format( count, errors_test_set ))
 
+print('average test overall all test set took %s seconds' % ( sum(duration_test_list)/len(duration_test_list) ) )
 
-            errors_test_set = np.true_divide( err.detach().numpy() , total) ?
-            loss_list.append(loss.data)
-            iteration_list.append(count)
-            errors_test_set_list.append(errors_test_set)
-
-        if not (count % 100):
-            print("Iteration: {}, Loss: {}, errors_test_set: {} /(item, shop)".format(count, loss.data, errors_test_set))
-
-
-
-plt.plot(iteration_list, errors_test_set_list)
-plt.xlabel("No. of Iteration")
-plt.ylabel("errors_test_set")
-plt.title("Iterations vs errors_test_set, lr=%s, batch size=%s, %s epochs"%(learning_rate, batch_size, num_epochs))
+plt.plot( iteration_list, errors_test_set_list )
+plt.xlabel( "No. of Iteration" )
+plt.ylabel( "errors_test_set" )
+plt.title( "Iterations vs errors_test_set, batch size=%s, %s epochs, window of %s 1/4 hours" % ( batch_size, num_epochs, window_length ))
 plt.show()
-"""
