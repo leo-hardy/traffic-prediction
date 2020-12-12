@@ -6,7 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 import numpy as np
 import matplotlib.pyplot as plt
-import random
+from sklearn.utils import shuffle
 import time
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -40,7 +40,7 @@ train_data_normalized = scaler.fit_transform( data["LAMAR BLVD / SANDRA MURAIDA 
 train_data_normalized = train_data_normalized.reshape(1,-1)[0][50000 :55000]
 
 # length of the window for training, it is the number of previous quarter-hours from which the net learns
-window_length = 4*2
+window_length = 4*24 # for one day
 batch_size = 1
 print( 'hyperparameters : window_length = %s hours' % (window_length/4) )
 
@@ -58,7 +58,7 @@ radar_sequences = createur_vecteur( train_data_normalized, window_length )
 train_seq, test_seq = train_test_split( radar_sequences, test_size=300 )
 
 # Shuffling the train set
-train_seq = random.shuffle(train_seq)
+train_seq = shuffle(train_seq, random_state=0)
 
 data_time = time.time()
 print('training and testing set preparation took %s seconds' % (data_time-start_time) )
@@ -94,7 +94,6 @@ class LSTM(nn.Module):
         lstm_out, self.hidden_cell = self.lstm( input.view( len(input), 1, -1 ), self.hidden_cell )
         # Après chaque couche, on utilise la fonction d'activation ReLu
         # on extrait la derniere couche h_t_finale.
-
         x = lstm_out[-1].view( -1, self.hidden_layer_size )
         x = self.fc1( x )
         return x
@@ -123,7 +122,7 @@ Mise en place de la boucle d'apprentissage
 
 """
 num_epochs = 200
-""" Besoin de desordonner les données du train set """
+
 
 # Lists for visualization of loss and accuracy
 loss_list = []
