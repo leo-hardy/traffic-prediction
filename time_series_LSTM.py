@@ -50,9 +50,8 @@ class LSTM(nn.Module):
         # définition du module lstm à un seul bloc
         self.lstm = nn.LSTM( input_size=input_size, num_layers=1, hidden_size=self.hidden_layer_size )
         # définition de le 3 couches denses en sorties du module LSTM
-        self.fc1 = nn.Linear( in_features=self.hidden_layer_size, out_features=64 )
-        self.fc2 = nn.Linear( in_features=64, out_features=32)
-        self.fc3 = nn.Linear( in_features=32, out_features=1)
+
+        self.fc1 = nn.Linear( in_features=self.hidden_layer_size, out_features=1)
 
         self.hidden_cell = (
             torch.zeros( 1, 1, self.hidden_layer_size ),
@@ -67,9 +66,7 @@ class LSTM(nn.Module):
         # on extrait la derniere couche h_t_finale.
 
         x = lstm_out[-1].view( -1, self.hidden_layer_size )
-        x = F.relu( self.fc1( x )) # POURQUOI UN RELU ICI ?
-        x = F.relu( self.fc2( x )) # POURQUOI UN RELU ICI ?
-        x = self.fc3( x ) # POURQUOI PAS UN RELU ICI ?
+        x = self.fc1( x )
         return x
 
     def reset_hidden_state(self):
@@ -120,10 +117,8 @@ for epoch in range( num_epochs ):
 
         # Optimizing the parameters
         optimizer.step()
-    print("finish", loss.item())
-    loss_list.append(loss.item())
-plt.plot([i for i in range( num_epochs )], loss_list)
-plt.show()
+    print("finish")
+
 """
         count += 1
         # Testing the model
