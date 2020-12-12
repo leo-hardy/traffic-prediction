@@ -170,7 +170,7 @@ for epoch in range( num_epochs ):
             errors_test_set_list.append( errors_test_set )
             duration_test_list.append( time.time() - t1 )
 
-            print("Iteration: {}, Loss: {}, errors_test_set: {} /(quarter hour)".format( count, loss.data, errors_test_set ))
+            print("Iteration: {}, errors_test_set: {} /(quarter hour)".format( count, errors_test_set ))
 
 print('average test overall all test set took %s seconds' % ( sum(duration_test_list)/len(duration_test_list) ) )
 
