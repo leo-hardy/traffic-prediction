@@ -66,6 +66,12 @@ Dans un second temps, étant donné la répartition des données illustrées par
 ![volume_repartition](./images/volume_repartition.png)
 ![volume_stats](./images/volume_stats.png)
 
+## Optimisation des hyper-paramètres
+
+### taille de la sliding window
+
+Le modèle se base sur les n quart-d'heures précédant la valeur à prédire. Quel est la taille optimale de cette durée ?
+
 
 ## Pistes d'amélioration
 
