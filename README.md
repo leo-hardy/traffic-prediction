@@ -17,11 +17,10 @@ Un autre article dont nous nous sommes inspirés est [celui-ci](https://www.rese
 Cet article propose de combiner un Deep Autoencoder (DAE) et un Long Short Term Memory (LSTM). Cette approche nous a semblé trop complexe dans le cadre d'une première solution au problème proposé.
 
 
-Dans l'optique d'avoir des résultats expérimentaux dans le temps imparti nous as semblé fondamental pour pouvoir travailler sur l'ajustement d'hyperparameters et l'interpretation de résultats.
-Nous estimons donc qu'il est probablement plus judicieux de se contenir à la mise en place seulement d'un LSTM suivis de couches denses.
+Dans l'optique d'avoir des résultats expérimentaux dans le temps imparti il nous a semblé fondamental pour pouvoir travailler sur l'ajustement d'hyperparametres et l'interpretation de résultats.
+Nous nous contentons donc de la mise en place d'un LSTM suivis d'une couche dense.
 
-
-Dans le but d'obtenir rapidement des résultats sur lesquels nous baser pour améliorer notre démarche, nous avons décidé de créer un modèle qui apprennent sur un seul radar dans un premier temps.
+Afin d'affiner notre démarche nous avons décidé de créer un modèle dont l'apprentissage est réalisé sur un seul radar. Si les résultats sont concluants, nous généraliserons notre approche.
 
 
 ## Data processing
@@ -65,6 +64,19 @@ Dans un second temps, étant donné la répartition des données illustrées par
 
 ![volume_repartition](./images/volume_repartition.png)
 ![volume_stats](./images/volume_stats.png)
+## Le choix du modèle
+
+### LSTM
+
+Le Long short-term memory network est un réseau récurrent. Généralement, les réseaux récurrents permettent de prendre en compte la nature séquentielle des données ce qui s'avère particulièrement intéressant dans le cas de la prédiction de séries temporelles. Le réseaux récurrent ont une fâcheuse tendance à subir le problème d'extinction du gradient, ce qui peut les rendre facilement inopérants.
+C'est notamment pour éviter ce phénomène que le LSTM à fait son apparition. Le principe de cellule permet de gérer très précisément l'enregistrement de données au fil de la récurrence.
+
+### Implementation
+
+Dans le cadre de notre projet, nous avons choisi de travailler avec un réseau LSTM "stateless". Ainsi, lorsque le réseau parcours une fenêtre, il ne conserve pas la valeur de la cellule cachée (hidden state), ni la valeur de la cellule d'état (cell state). Cette variante est possible car nous considérons que toutes les journées sont indépendantes les unes des autres (car nous avons finalement choisi de travailler avec une window de 24 heures).
+
+Enfin, l'avantage de travailler avec un LSTM stateless est qu'il nous laisse la possibilité de travailler simplement avec la technique de "mini-batch".  
+
 
 ## Optimisation des hyper-paramètres
 
@@ -72,9 +84,11 @@ Dans un second temps, étant donné la répartition des données illustrées par
 
 Nous avons testé plusieurs learning rate allant de de 10E-1 à 10E-6. Nous avons trouvé une valeur optimale de XXXX pour notre apprentissage.
 
-### taille de la sliding window
+### Taille de la sliding window
 
 Le modèle se base sur les n quart-d'heures précédant la valeur à prédire. Quel est la taille optimale de cette durée ?
+
+Après réflexion, nous pensons qu'il est plus judicieux de partir sur une fenêtre de 24 heures. D'une part, on peut faire l'hypothèse que les jours sont indépendants les uns des autres. D'autre part, le fait de prendre une fenêtre assez grande, nous permet d'utiliser les capacités de mémorisation du LSTM.
 
 
 ## Pistes d'amélioration
