@@ -1,4 +1,4 @@
-# traffic-prediction
+# Traffic-prediction
 
 Paul Lecomte, Léo Hardy
 

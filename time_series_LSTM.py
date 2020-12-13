@@ -111,7 +111,7 @@ net = LSTM()
 # Nous choisissons d'utiliser l'erreur quadratique moyenne comme criterion et l'optimize Adam (choix relativement arbitraire..)
 criterion = nn.MSELoss()
 
-learning_rate = 1E-3
+learning_rate = 0.001
 optimizer = torch.optim.Adam( net.parameters(), lr=learning_rate )
 
 model_time = time.time()
@@ -123,7 +123,7 @@ print('Model creation took %s seconds' % (model_time-data_time) )
 Mise en place de la boucle d'apprentissage
 
 """
-num_epochs = 4
+num_epochs = 6
 
 
 # Lists for visualization of loss and accuracy
@@ -157,7 +157,7 @@ for epoch in range( num_epochs ):
         count += 1
 
         # Testing the model every 100 iterations
-        checkpoint = 100
+        checkpoint = 300
         if not ( count % checkpoint ):
             t1 = time.time()
             err = 0
@@ -188,8 +188,8 @@ for epoch in range( num_epochs ):
 
 
 print('average test overall all test set took %s seconds' % ( sum(duration_test_list)/len(duration_test_list) ) )
-plt.plot( iteration_list, loss_list, color='r' )
-plt.plot( iteration_list, errors_test_set_list, color='b' )
+plt.plot( iteration_list, loss_list, color='r', label="Train loss" )
+plt.plot( iteration_list, errors_test_set_list, color='b', label="Test loss"  )
 plt.xlabel( "No. of Iteration" )
 plt.ylabel( "errors_test_set" )
 plt.title( "Iterations vs errors_test_set, batch size=%s, %s epochs, window of %s 1/4 hours, lr=%s" % ( batch_size, num_epochs, window_length, learning_rate ))
