@@ -183,8 +183,6 @@ for epoch in range( num_epochs ):
             print("Iteration: {}, errors_test_set: {} /(quarter hour)".format( count, errors_test_set ))
             loss_list.append( np.true_divide( loss_denormalized_sum.detach().numpy() , checkpoint ) )
             loss_denormalized_sum = 0
-            print("Error loss on test set: {}".format(loss.item()))
-
 
 
 
