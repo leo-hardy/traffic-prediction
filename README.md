@@ -90,6 +90,10 @@ Le modèle se base sur les n quart-d'heures précédant la valeur à prédire. Q
 
 Après réflexion, nous pensons qu'il est plus judicieux de partir sur une fenêtre de 24 heures. D'une part, on peut faire l'hypothèse que les jours sont indépendants les uns des autres. D'autre part, le fait de prendre une fenêtre assez grande, nous permet d'utiliser les capacités de mémorisation du LSTM.
 
+### nombre de couches denses
+
+Nous avons testé plusieurs architectures pour le réseau, en ajoutant des couches denses de différentes tailles entre la sortie du LSTM et la sortie du réseau.
+L'ajout de couches n'a pas permis une amélioration des prédictions, les résultats étaient comparables, et se traduisait par une augmentation du temps de calcul. Nous avons donc choisi de n'avoir qu'une seule couche dense après le LSTM.
 
 ## Pistes d'amélioration
 
