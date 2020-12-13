@@ -6,7 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.utils import shuffle
+#from sklearn.utils import shuffle
 import time
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -37,7 +37,7 @@ data = pd.read_csv("../LAMAR BLVD.csv")
 # Normalisation des donnees entre -1 et 1 en utilisant la fonction MinMaxScaler de la librairie sklearn
 scaler = MinMaxScaler( feature_range=(-1, 1) )
 train_data_normalized = scaler.fit_transform( data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"].to_numpy().reshape(-1, 1) )
-train_data_normalized = train_data_normalized.reshape(1,-1)[0][50000 :55000]
+train_data_normalized = train_data_normalized.reshape(1,-1)[0][50000 :51000]
 
 # length of the window for training, it is the number of previous quarter-hours from which the net learns
 window_length = 4*24 # for one day
@@ -58,7 +58,7 @@ radar_sequences = createur_vecteur( train_data_normalized, window_length )
 train_seq, test_seq = train_test_split( radar_sequences, test_size=300 )
 
 # Shuffling the train set
-train_seq = shuffle(train_seq, random_state=0)
+#train_seq = shuffle(train_seq, random_state=0)
 
 data_time = time.time()
 print('training and testing set preparation took %s seconds' % (data_time-start_time) )
@@ -110,7 +110,9 @@ class LSTM(nn.Module):
 net = LSTM()
 # Nous choisissons d'utiliser l'erreur quadratique moyenne comme criterion et l'optimize Adam (choix relativement arbitraire..)
 criterion = nn.MSELoss()
-optimizer = torch.optim.Adam( net.parameters() )
+
+learning_rate = 1E-3
+optimizer = torch.optim.Adam( net.parameters(), lr=learning_rate )
 
 model_time = time.time()
 print('Model creation took %s seconds' % (model_time-data_time) )
@@ -121,7 +123,7 @@ print('Model creation took %s seconds' % (model_time-data_time) )
 Mise en place de la boucle d'apprentissage
 
 """
-num_epochs = 10
+num_epochs = 1
 
 
 # Lists for visualization of loss and accuracy
@@ -129,6 +131,7 @@ loss_list = []
 iteration_list = []
 errors_test_set_list = []
 duration_test_list = []
+loss_mean = 0
 
 count = 0
 for epoch in range( num_epochs ):
@@ -144,7 +147,7 @@ for epoch in range( num_epochs ):
         traffic_predicted = net( traffic_previous )
 
         loss = criterion( traffic_predicted[0][0], traffic_real )
-
+        loss_mean += np.sqrt( criterion( torch.FloatTensor(scaler.inverse_transform(traffic_predicted.detach().numpy() )[0]), torch.FloatTensor(scaler.inverse_transform( traffic_real.reshape(-1, 1) )[0]) ) )
         # Propagating the error backward
         loss.backward()
 
@@ -154,7 +157,8 @@ for epoch in range( num_epochs ):
         count += 1
 
         # Testing the model every 100 iterations
-        if not ( count % 100 ):
+        checkpoint = 100
+        if not ( count % checkpoint ):
             t1 = time.time()
             err = 0
 
@@ -176,16 +180,19 @@ for epoch in range( num_epochs ):
 
 
             print("Iteration: {}, errors_test_set: {} /(quarter hour)".format( count, errors_test_set ))
-            loss_list.append( loss.item() )
+            loss_list.append( np.true_divide( loss_mean.detach().numpy() , checkpoint ) )
+            loss_mean = 0
             print("Error loss on test set: {}".format(loss.item()))
 
 
 
 
 print('average test overall all test set took %s seconds' % ( sum(duration_test_list)/len(duration_test_list) ) )
-plt.plot( iteration_list, loss_list )
-plt.plot( iteration_list, errors_test_set_list )
+plt.plot( iteration_list, loss_list, color='r' )
+plt.plot( iteration_list, errors_test_set_list, color='b' )
 plt.xlabel( "No. of Iteration" )
 plt.ylabel( "errors_test_set" )
-plt.title( "Iterations vs errors_test_set, batch size=%s, %s epochs, window of %s 1/4 hours" % ( batch_size, num_epochs, window_length ))
+plt.title( "Iterations vs errors_test_set, batch size=%s, %s epochs, window of %s 1/4 hours, lr=%s" % ( batch_size, num_epochs, window_length, learning_rate ))
 plt.show()
+
+print("TOTAL took %s seconds" % (time.time() - start_time))
