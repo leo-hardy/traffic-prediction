@@ -37,7 +37,7 @@ data = pd.read_csv("../LAMAR BLVD.csv")
 # Normalisation des donnees entre -1 et 1 en utilisant la fonction MinMaxScaler de la librairie sklearn
 scaler = MinMaxScaler( feature_range=(-1, 1) )
 train_data_normalized = scaler.fit_transform( data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"].to_numpy().reshape(-1, 1) )
-train_data_normalized = train_data_normalized.reshape(1,-1)[0][50000 :51000]
+train_data_normalized = train_data_normalized.reshape(1,-1)[0][50000 :55000]
 
 # length of the window for training, it is the number of previous quarter-hours from which the net learns
 window_length = 4*24 # for one day
@@ -131,7 +131,7 @@ loss_list = []
 iteration_list = []
 errors_test_set_list = []
 duration_test_list = []
-loss_mean = 0
+loss_denormalized_sum = 0
 
 count = 0
 for epoch in range( num_epochs ):
@@ -147,7 +147,7 @@ for epoch in range( num_epochs ):
         traffic_predicted = net( traffic_previous )
 
         loss = criterion( traffic_predicted[0][0], traffic_real )
-        loss_mean += np.sqrt( criterion( torch.FloatTensor(scaler.inverse_transform(traffic_predicted.detach().numpy() )[0]), torch.FloatTensor(scaler.inverse_transform( traffic_real.reshape(-1, 1) )[0]) ) )
+        loss_denormalized_sum += np.sqrt( criterion( torch.FloatTensor(scaler.inverse_transform(traffic_predicted.detach().numpy() )[0]), torch.FloatTensor(scaler.inverse_transform( traffic_real.reshape(-1, 1) )[0]) ) )
         # Propagating the error backward
         loss.backward()
 
@@ -180,8 +180,8 @@ for epoch in range( num_epochs ):
 
 
             print("Iteration: {}, errors_test_set: {} /(quarter hour)".format( count, errors_test_set ))
-            loss_list.append( np.true_divide( loss_mean.detach().numpy() , checkpoint ) )
-            loss_mean = 0
+            loss_list.append( np.true_divide( loss_denormalized_sum.detach().numpy() , checkpoint ) )
+            loss_denormalized_sum = 0
             print("Error loss on test set: {}".format(loss.item()))
 
 
