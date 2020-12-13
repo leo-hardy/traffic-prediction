@@ -123,7 +123,7 @@ print('Model creation took %s seconds' % (model_time-data_time) )
 Mise en place de la boucle d'apprentissage
 
 """
-num_epochs = 1
+num_epochs = 4
 
 
 # Lists for visualization of loss and accuracy
