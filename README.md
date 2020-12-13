@@ -8,23 +8,33 @@ L'objectif est d'effectuer une prévision de traffic pour la ville d'Austin, à 
 
 *Note à l'intention de M.Cerisara : le nombre de commit de chacun de nous deux n'est pas forcément représentatif de nos travaux respectifs étant donné que nous avons travaillé et réfléchi à deux sur la même machine à de nombreux moments.*
 
-## Etat de l'art et motivation de l'approche choisie
+
+## Sommaire
+
+ - [Etat de l'art et motivation de l'approche choisie](#etat-de-l'art)
+ - [Data processing](#data-processing)
+ - [Le choix du modèle](#choix-du-modele)
+ - [Optimisation des hyperparamètres](#optimisation)
+ - [Pistes d'amélioration](#ameliorations)
+
+
+
+## Etat de l'art et motivation de l'approche choisie <a name="etat-de-l'art"></a>
 
 Nous nous sommes en premier lieu penchés sur plusieurs articles de recherche sur la prédiction de traffic.
 Celui qui a le plus retenu notre attention est [celui-ci](https://www.researchgate.net/publication/333096680_Deep_Autoencoder_Neural_Networks_for_Short-Term_Traffic_Congestion_Prediction_of_Transportation_Networks), et propose de créer une représentation graphique de la ville avec une coloration présentant la densité de traffic.
 Un autre article dont nous nous sommes inspirés est [celui-ci](https://www.researchgate.net/publication/340158853_Air_Pollution_Prediction_Using_Long_Short-Term_Memory_LSTM_and_Deep_Autoencoder_DAE_Models/link/5e7b59f7299bf1f3874008f0/download)
 
-Bien que l'approche originale et les résultats présentés pertinents, nous avons dû abandonner cette piste trop ambitieuse (un combinaison de DAE et des LSTM) pour un projet de cette durée. Nous mettons de côté l'approche par DAE.
+Cet article propose de combiner un Deep Autoencoder (DAE) et un Long Short Term Memory (LSTM). Cette approche nous a semblé trop complexe dans le cadre d'une première solution au problème proposé.
 
 
-Nous nous sommes alors résolu à emprunter une approche plus familière pour nous, dans l'optique d'avoir des résultats à moyen terme, qui pourront enrichir notre réflexion.
-Nous estimons donc qu'il est probablement plus judicieux de se contenir à la mise en place seulement d'un LSTM suivis de couches denses.
+Dans l'optique d'avoir des résultats expérimentaux dans le temps imparti il nous a semblé fondamental pour pouvoir travailler sur l'ajustement d'hyperparametres et l'interpretation de résultats.
+Nous nous contentons donc de la mise en place d'un LSTM suivis d'une couche dense.
+
+Afin d'affiner notre démarche nous avons décidé de créer un modèle dont l'apprentissage est réalisé sur un seul radar. Si les résultats sont concluants, nous généraliserons notre approche.
 
 
-Dans le but d'obtenir rapidement des résultats sur lesquels nous baser pour améliorer notre démarche, nous avons décidé de créer un modèle qui apprennent sur un seul radar dans un premier temps.
-
-
-## Data processing
+## Data processing <a name="data-processing"></a>
 
 (Les graphiques suivant sont effectués avec la librairie matplotlib)
 
@@ -65,15 +75,38 @@ Dans un second temps, étant donné la répartition des données illustrées par
 
 ![volume_repartition](./images/volume_repartition.png)
 ![volume_stats](./images/volume_stats.png)
+## Le choix du modèle <a name="choix-du-modele"></a>
 
-## Optimisation des hyper-paramètres
+### LSTM <a name="lstm"></a>
 
-### taille de la sliding window
+Le Long short-term memory network est un réseau récurrent. Généralement, les réseaux récurrents permettent de prendre en compte la nature séquentielle des données ce qui s'avère particulièrement intéressant dans le cas de la prédiction de séries temporelles. Le réseaux récurrent ont une fâcheuse tendance à subir le problème d'extinction du gradient, ce qui peut les rendre facilement inopérants.
+C'est notamment pour éviter ce phénomène que le LSTM à fait son apparition. Le principe de cellule permet de gérer très précisément l'enregistrement de données au fil de la récurrence.
+
+### Implementation <a name="implementation"></a>
+
+Dans le cadre de notre projet, nous avons choisi de travailler avec un réseau LSTM "stateless". Ainsi, lorsque le réseau parcours une fenêtre, il ne conserve pas la valeur de la cellule cachée (hidden state), ni la valeur de la cellule d'état (cell state). Cette variante est possible car nous considérons que toutes les journées sont indépendantes les unes des autres (car nous avons finalement choisi de travailler avec une window de 24 heures).
+
+Enfin, l'avantage de travailler avec un LSTM stateless est qu'il nous laisse la possibilité de travailler simplement avec la technique de "mini-batch".  
+
+
+## Optimisation des hyper-paramètres <a name="optimisation"></a>
+
+### learning rate <a name="learning-rate"></a>
+
+Nous avons testé plusieurs learning rate allant de de 10E-1 à 10E-6. Nous avons trouvé une valeur optimale de XXXX pour notre apprentissage.
+
+### Taille de la sliding window <a name="window"></a>
 
 Le modèle se base sur les n quart-d'heures précédant la valeur à prédire. Quel est la taille optimale de cette durée ?
 
+Après réflexion, nous pensons qu'il est plus judicieux de partir sur une fenêtre de 24 heures. D'une part, on peut faire l'hypothèse que les jours sont indépendants les uns des autres. D'autre part, le fait de prendre une fenêtre assez grande, nous permet d'utiliser les capacités de mémorisation du LSTM.
 
-## Pistes d'amélioration
+### nombre de couches denses
+
+Nous avons testé plusieurs architectures pour le réseau, en ajoutant des couches denses de différentes tailles entre la sortie du LSTM et la sortie du réseau.
+L'ajout de couches n'a pas permis une amélioration des prédictions, les résultats étaient comparables, et se traduisait par une augmentation du temps de calcul. Nous avons donc choisi de n'avoir qu'une seule couche dense après le LSTM.
+
+## Pistes d'amélioration <a name="ameliorations"></a>
 
 - interpoler les données manquantes avec le réseau entraîné
 
