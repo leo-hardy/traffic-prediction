@@ -1,5 +1,9 @@
 # traffic-prediction
 
+## Sommaire
+
+ - [Etat de l'art et motivation de l'approche choisie](#etat-de-l'art)
+
 Paul Lecomte, Léo Hardy
 
 Ce git résume le projet effectué lors du [cours de Machine Learning de M.Cristophe Cerisara](https://members.loria.fr/CCerisara/#courses/machine_learning/).
@@ -8,7 +12,7 @@ L'objectif est d'effectuer une prévision de traffic pour la ville d'Austin, à 
 
 *Note à l'intention de M.Cerisara : le nombre de commit de chacun de nous deux n'est pas forcément représentatif de nos travaux respectifs étant donné que nous avons travaillé et réfléchi à deux sur la même machine à de nombreux moments.*
 
-## Etat de l'art et motivation de l'approche choisie
+## Etat de l'art et motivation de l'approche choisie <a name="etat-de-l'art"></a>
 
 Nous nous sommes en premier lieu penchés sur plusieurs articles de recherche sur la prédiction de traffic.
 Celui qui a le plus retenu notre attention est [celui-ci](https://www.researchgate.net/publication/333096680_Deep_Autoencoder_Neural_Networks_for_Short-Term_Traffic_Congestion_Prediction_of_Transportation_Networks), et propose de créer une représentation graphique de la ville avec une coloration présentant la densité de traffic.
