@@ -121,7 +121,7 @@ print('Model creation took %s seconds' % (model_time-data_time) )
 Mise en place de la boucle d'apprentissage
 
 """
-num_epochs = 200
+num_epochs = 10
 
 
 # Lists for visualization of loss and accuracy
@@ -151,7 +151,6 @@ for epoch in range( num_epochs ):
         # Optimizing the parameters
         optimizer.step()
 
-
         count += 1
 
         # Testing the model every 100 iterations
@@ -175,10 +174,16 @@ for epoch in range( num_epochs ):
             errors_test_set_list.append( errors_test_set )
             duration_test_list.append( time.time() - t1 )
 
+
             print("Iteration: {}, errors_test_set: {} /(quarter hour)".format( count, errors_test_set ))
+            loss_list.append( loss.item() )
+            print("Error loss on test set: {}".format(loss.item()))
+
+
+
 
 print('average test overall all test set took %s seconds' % ( sum(duration_test_list)/len(duration_test_list) ) )
-
+plt.plot( iteration_list, loss_list )
 plt.plot( iteration_list, errors_test_set_list )
 plt.xlabel( "No. of Iteration" )
 plt.ylabel( "errors_test_set" )
