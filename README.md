@@ -15,7 +15,7 @@ L'objectif est d'effectuer une prévision de traffic pour la ville d'Austin, à 
  - [Data processing](#data-processing)
  - [Le choix du modèle](#choix-du-modele)
  - [Optimisation des hyperparamètres](#optimisation)
-  -[Pistes d'amélioration](#ameliorations)
+ - [Pistes d'amélioration](#ameliorations)
 
 
 
