@@ -1,9 +1,5 @@
 # traffic-prediction
 
-## Sommaire
-
- - [Etat de l'art et motivation de l'approche choisie](#etat-de-l'art)
-
 Paul Lecomte, Léo Hardy
 
 Ce git résume le projet effectué lors du [cours de Machine Learning de M.Cristophe Cerisara](https://members.loria.fr/CCerisara/#courses/machine_learning/).
@@ -11,6 +7,17 @@ Ce git résume le projet effectué lors du [cours de Machine Learning de M.Crist
 L'objectif est d'effectuer une prévision de traffic pour la ville d'Austin, à l'aide des données des radars de la ville, [disponibles sur ce challenge kaggle.](https://www.kaggle.com/vinayshanbhag/radar-traffic-data)
 
 *Note à l'intention de M.Cerisara : le nombre de commit de chacun de nous deux n'est pas forcément représentatif de nos travaux respectifs étant donné que nous avons travaillé et réfléchi à deux sur la même machine à de nombreux moments.*
+
+
+## Sommaire
+
+ - [Etat de l'art et motivation de l'approche choisie](#etat-de-l'art)
+ - [Data processing](#data-processing)
+ - [Le choix du modèle](#choix-du-modele)
+ - [Optimisation des hyperparamètres](#optimisation)
+  -[Pistes d'amélioration](#ameliorations)
+
+
 
 ## Etat de l'art et motivation de l'approche choisie <a name="etat-de-l'art"></a>
 
@@ -27,7 +34,7 @@ Nous nous contentons donc de la mise en place d'un LSTM suivis d'une couche dens
 Afin d'affiner notre démarche nous avons décidé de créer un modèle dont l'apprentissage est réalisé sur un seul radar. Si les résultats sont concluants, nous généraliserons notre approche.
 
 
-## Data processing
+## Data processing <a name="data-processing"></a>
 
 (Les graphiques suivant sont effectués avec la librairie matplotlib)
 
@@ -68,27 +75,27 @@ Dans un second temps, étant donné la répartition des données illustrées par
 
 ![volume_repartition](./images/volume_repartition.png)
 ![volume_stats](./images/volume_stats.png)
-## Le choix du modèle
+## Le choix du modèle <a name="choix-du-modele"></a>
 
-### LSTM
+### LSTM <a name="lstm"></a>
 
 Le Long short-term memory network est un réseau récurrent. Généralement, les réseaux récurrents permettent de prendre en compte la nature séquentielle des données ce qui s'avère particulièrement intéressant dans le cas de la prédiction de séries temporelles. Le réseaux récurrent ont une fâcheuse tendance à subir le problème d'extinction du gradient, ce qui peut les rendre facilement inopérants.
 C'est notamment pour éviter ce phénomène que le LSTM à fait son apparition. Le principe de cellule permet de gérer très précisément l'enregistrement de données au fil de la récurrence.
 
-### Implementation
+### Implementation <a name="implementation"></a>
 
 Dans le cadre de notre projet, nous avons choisi de travailler avec un réseau LSTM "stateless". Ainsi, lorsque le réseau parcours une fenêtre, il ne conserve pas la valeur de la cellule cachée (hidden state), ni la valeur de la cellule d'état (cell state). Cette variante est possible car nous considérons que toutes les journées sont indépendantes les unes des autres (car nous avons finalement choisi de travailler avec une window de 24 heures).
 
 Enfin, l'avantage de travailler avec un LSTM stateless est qu'il nous laisse la possibilité de travailler simplement avec la technique de "mini-batch".  
 
 
-## Optimisation des hyper-paramètres
+## Optimisation des hyper-paramètres <a name="optimisation"></a>
 
-### learning rate
+### learning rate <a name="learning-rate"></a>
 
 Nous avons testé plusieurs learning rate allant de de 10E-1 à 10E-6. Nous avons trouvé une valeur optimale de XXXX pour notre apprentissage.
 
-### Taille de la sliding window
+### Taille de la sliding window <a name="window"></a>
 
 Le modèle se base sur les n quart-d'heures précédant la valeur à prédire. Quel est la taille optimale de cette durée ?
 
@@ -99,7 +106,7 @@ Après réflexion, nous pensons qu'il est plus judicieux de partir sur une fenê
 Nous avons testé plusieurs architectures pour le réseau, en ajoutant des couches denses de différentes tailles entre la sortie du LSTM et la sortie du réseau.
 L'ajout de couches n'a pas permis une amélioration des prédictions, les résultats étaient comparables, et se traduisait par une augmentation du temps de calcul. Nous avons donc choisi de n'avoir qu'une seule couche dense après le LSTM.
 
-## Pistes d'amélioration
+## Pistes d'amélioration <a name="ameliorations"></a>
 
 - interpoler les données manquantes avec le réseau entraîné
 
