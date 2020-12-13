@@ -91,6 +91,9 @@ Enfin, l'avantage de travailler avec un LSTM stateless est qu'il nous laisse la 
 
 ## Optimisation des hyper-paramètres <a name="optimisation"></a>
 
+### batch size
+
+
 ### learning rate <a name="learning-rate"></a>
 
 Nous avons testé plusieurs learning rate allant de de 10E-1 à 10E-6. Nous avons trouvé une valeur optimale de XXXX pour notre apprentissage.
