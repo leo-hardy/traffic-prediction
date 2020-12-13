@@ -68,6 +68,10 @@ Dans un second temps, étant donné la répartition des données illustrées par
 
 ## Optimisation des hyper-paramètres
 
+### learning rate
+
+Nous avons testé plusieurs learning rate allant de de 10E-1 à 10E-6. Nous avons trouvé une valeur optimale de XXXX pour notre apprentissage.
+
 ### taille de la sliding window
 
 Le modèle se base sur les n quart-d'heures précédant la valeur à prédire. Quel est la taille optimale de cette durée ?
