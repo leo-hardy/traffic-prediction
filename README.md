@@ -17,6 +17,7 @@ L'objectif est d'effectuer une prévision de traffic pour la ville d'Austin, à 
  - [Data processing](#data-processing)
  - [Le choix du modèle](#choix-du-modele)
  - [Optimisation des hyperparamètres](#optimisation)
+ - [Prédictions](#predictions)
  - [Pistes d'amélioration](#ameliorations)
 
 
@@ -40,7 +41,9 @@ Afin d'affiner notre démarche nous avons décidé de créer un modèle dont l'a
 
 (Les graphiques suivant sont effectués avec la librairie matplotlib)
 
-Une fois les données nettoyées (espaces inutiles avant le nom des lieux), nous nous sommes posé la question de la complétion de l'information fournie. En d'autres termes, combien de mesure manque-t-il par radar dans l'intervalle de temps proposé, pour chaque radar ?
+En premier lieu, nous avons sommé les voies de chaque rue de telle façon qu'à un radar correspond la somme des traffics de toutes ses voies.
+
+Ensuite, une fois les données nettoyées (espaces inutiles avant le nom des lieux), nous nous sommes posé la question de la complétion de l'information fournie. En d'autres termes, combien de mesure manque-t-il par radar dans l'intervalle de temps proposé, pour chaque radar ?
 
 Voici le pourcentage de valeurs manquantes pour chacun des radars :
 
@@ -124,22 +127,28 @@ L'ajout de couches n'a pas permis une amélioration des prédictions, les résul
 
 
 
-## Prédiction <a name="lstm"></a>
+## Prédictions <a name="predictions"></a>
 
 Pour réaliser les prédictions, nous avons mis en place une fonction "many-to-one". Par exemple, pour la prédiction du k-ième quart d'heure, nous avons au préalable prédit les k-ième quart d'heure précédent.
 
 Nous obtenons les résultats suivant:
 
-Pour un réseau entrainé sur le dataset **LAMAR_BLVD_SANDRA_MURAIDA_WAY**, nous retrouvons bien la périodicité journalière. Au dela de la périodicité, nous constatons que le modèle bien que fonctionnant en *many-to-one* arrive à anticiper certaines irrégularités fortes à la sinusoïde comme aux abscisses 350 et 550.
+Pour un réseau entrainé sur le dataset **LAMAR_BLVD_SANDRA_MURAIDA_WAY**, nous retrouvons bien la périodicité journalière. Au-delà de la périodicité, nous constatons que le modèle bien que fonctionnant en *many-to-one* arrive à anticiper certaines irrégularités fortes à la sinusoïde comme aux abscisses 350 et 550.
 
 ![lamar_sept_2017_rough_datat](./images/LAMAR_BLVD_SANDRA_MURAIDA_WAY.png)
 
-Nous avons appliqué le réseau précédent pour prédire sur les données sur **CESAR_CHAVEZ_ST**. Le réseau fonctionne bien malgré les différences d'amplitude entre les deux croisements.
+Nous avons appliqué le réseau précédent pour prédire sur les données sur **CESAR_CHAVEZ_ST**. Le réseau fonctionne bien malgré les différences d'amplitude et les paliers différents au maximum de la sinusoïde entre les deux croisements.
 
 ![lamar_sept_2017_rough_datat](./images/CESAR_CHAVEZ_ST.png)
 
 
-## Pistes d'amélioration <a name="ameliorations"></a>
+## Conclusions et pistes d'amélioration <a name="ameliorations"></a>
+
+En somme, nous sommes satisfaits des résultats ! Le modèle parvient à anticiper les variations tant sur le radar qui nous a servi à l'apprentissage que sur un autre radar, différent par les traffics observés et assez éloigné géographiquement pour supposer l'indépendance entre les deux.
+
+Par rapport au travail précédent sur la prévision de ventes sur les magasins Russes, nous sommes heureux d'avoir mieux géré notre temps entre le data processing et la construction du modèle. Cela nous a permis de passer plus de temps à créer le modèle.
+
+Selon nous, plusieurs pistes pourraient être explorées pour améliorer ce travail :
 
 - Interpoler les données manquantes avec le réseau entraîné
 
