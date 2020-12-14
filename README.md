@@ -1,6 +1,7 @@
 # Traffic-prediction
 
 Paul Lecomte, Léo Hardy
+
 ![background](./images/background.jpg)
 *[Images : [Boston University Center for Information & Systems Engineering](http://www.bu.edu/systems/2020/04/22/advancing-smart-cities-with-the-internet-of-cars/)]*
 
