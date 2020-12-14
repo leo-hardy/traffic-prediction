@@ -124,16 +124,23 @@ L'ajout de couches n'a pas permis une amélioration des prédictions, les résul
 
 ## Prédiction <a name="lstm"></a>
 
-Pour réaliser les prédictions, nous avons mis en place une fonction "many-to-one". Par exemple, pour la prédiction du k-ième quart d'heure, nous avons au préalable prédit les k-ième quart d'heure précédent. Nous obtenons les résultats suivant:
+Pour réaliser les prédictions, nous avons mis en place une fonction "many-to-one". Par exemple, pour la prédiction du k-ième quart d'heure, nous avons au préalable prédit les k-ième quart d'heure précédent.
+
+Nous obtenons les résultats suivant:
+
+Pour un réseau entrainé sur le dataset **LAMAR_BLVD_SANDRA_MURAIDA_WAY**, nous retrouvons bien la périodicité journalière.
 
 ![lamar_sept_2017_rough_datat](./images/LAMAR_BLVD_SANDRA_MURAIDA_WAY.png)
+
+Nous avons appliqué le réseau précédent pour prédire sur les données sur **CESAR_CHAVEZ_ST**. Le réseau fonctionne bien malgré les différences d'amplitude entre les deux croisements.
+
 ![lamar_sept_2017_rough_datat](./images/CESAR_CHAVEZ_ST.png)
 
 
 ## Pistes d'amélioration <a name="ameliorations"></a>
 
-- interpoler les données manquantes avec le réseau entraîné
+- Interpoler les données manquantes avec le réseau entraîné
 
-- apprendre sur plusieurs radars
+- Apprendre sur plusieurs radars
 
-- ajouter une couche d'encodeur/décodeur
+- Ajouter une couche d'encodeur/décodeur
