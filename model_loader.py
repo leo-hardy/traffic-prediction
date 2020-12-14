@@ -14,7 +14,12 @@ window_length = 4*24 # for one day
 data_lower_bound = 50000
 data_upper_bound = 55000
 
+my_radar = 'LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)'
 data = pd.read_csv("../LAMAR BLVD.csv")
+
+# my_radar = '700 BLK E CESAR CHAVEZ ST'
+# data = pd.read_csv("./CESAR CHAVEZ.csv")
+
 
 ### LOAD MODEL ###
 model = LSTM()
@@ -23,11 +28,11 @@ model.eval()
 
 ### PREDICT ON NEW DATA ###
 scaler = MinMaxScaler( feature_range=(-1, 1) )
-data_normalized = scaler.fit_transform( data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"].to_numpy().reshape(-1, 1) )
+data_normalized = scaler.fit_transform( data[ my_radar ].to_numpy().reshape(-1, 1) )
 
 # Plot the forcasting of car flow after the chosen data:
 nb_days_predicted = 10
-data_realized = data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"][data_upper_bound : data_upper_bound+4*24*nb_days_predicted].to_numpy()
+data_realized = data[ my_radar ][data_upper_bound : data_upper_bound+4*24*nb_days_predicted].to_numpy()
 data_normalized_to_be_predicted = data_normalized.reshape(1,-1)[0][data_upper_bound : data_upper_bound+4*24*nb_days_predicted]
 
 radar_sequences_to_be_predicted = createur_vecteur( data_normalized_to_be_predicted, window_length )
