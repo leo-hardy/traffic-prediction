@@ -40,8 +40,6 @@ Afin d'affiner notre démarche nous avons décidé de créer un modèle dont l'a
 
 ## Data processing <a name="data-processing"></a>
 
-(Les graphiques suivant sont effectués avec la librairie matplotlib)
-
 En premier lieu, nous avons sommé les voies de chaque rue de telle façon qu'à un radar correspond la somme des traffics de toutes ses voies.
 
 Ensuite, une fois les données nettoyées (espaces inutiles avant le nom des lieux), nous nous sommes posé la question de la complétion de l'information fournie. En d'autres termes, combien de mesure manque-t-il par radar dans l'intervalle de temps proposé, pour chaque radar ?
@@ -88,7 +86,7 @@ Dans un second temps, étant donné la répartition des données illustrées par
 Le Long short-term memory network est un réseau récurrent. Généralement, les réseaux récurrents permettent de prendre en compte la nature séquentielle des données ce qui s'avère particulièrement intéressant dans le cas de la prédiction de séries temporelles. Le réseaux récurrent ont une fâcheuse tendance à subir le problème d'extinction du gradient, ce qui peut les rendre facilement inopérants.
 C'est notamment pour éviter ce phénomène que le LSTM à fait son apparition. Le principe de cellule permet de gérer très précisément l'enregistrement de données au fil de la récurrence.
 
-### Implementation <a name="implementation"></a>
+### Implémentation <a name="implementation"></a>
 
 Dans le cadre de notre projet, nous avons choisi de travailler avec un réseau LSTM "stateless". Ainsi, lorsque le réseau parcours une fenêtre, il ne conserve pas la valeur de la cellule cachée (hidden state), ni la valeur de la cellule d'état (cell state). Cette variante est possible car nous considérons que toutes les journées sont indépendantes les unes des autres (car nous avons finalement choisi de travailler avec une window de 24 heures).
 
@@ -100,7 +98,7 @@ Enfin, l'avantage de travailler avec un LSTM stateless est qu'il nous laisse la 
 ### Taille du minibatch
 
 Nous avons testé plusieurs tailles de minibatch (1, 2, 4, 8, 32, 50 et 132) afin d'étudier une éventuelle influence sur les résultats. Le meilleur résultat obtenu l'a été pour un minibatch de taille 1.
-En effet au mieux avec des batchs de taille plus grande nous obtenions une erreur sur nos set d'entraînement et de test qui plafonnait aux alentours de 60 (pour rappel la moyenne des données des voitures est de 322, l'écart-type de 247). Comme nous allons le voir par la suite avec un **batch de taille 1** nous avons obtenu une erreur allant en dessous.
+En effet au mieux avec des batchs de taille plus grande nous obtenions une erreur sur nos set d'entraînement et de test qui plafonnait aux alentours de 60 (pour rappel la moyenne des données des voitures est de 322, l'écart-type de 247). Comme nous allons le voir par la suite avec un **batch de taille 1** nous avons obtenu une erreur allant en sous cette barre de 60.
 
 Par exemple, voici un graph des erreurs pour un batch de taille 132 :
 
@@ -130,9 +128,9 @@ L'ajout de couches n'a pas permis une amélioration des prédictions, les résul
 
 ## Prédictions <a name="predictions"></a>
 
-Pour réaliser les prédictions, nous avons mis en place une fonction "many-to-one". Par exemple, pour la prédiction du k-ième quart d'heure, nous avons au préalable prédit les k-ième quart d'heure précédent.
+Pour réaliser les prédictions, nous avons mis en place une fonction *many-to-one* Par exemple, pour la prédiction du k-ième quart d'heure, nous avons au préalable prédit les  k-1 quarts d'heure le précédant.
 
-Nous obtenons les résultats suivant:
+Nous obtenons les résultats suivants :
 
 Pour un réseau entrainé sur le dataset **LAMAR_BLVD_SANDRA_MURAIDA_WAY**, nous retrouvons bien la périodicité journalière. Au-delà de la périodicité, nous constatons que le modèle bien que fonctionnant en *many-to-one* arrive à anticiper certaines irrégularités fortes à la sinusoïde comme aux abscisses 350 et 550.
 
