@@ -33,11 +33,13 @@ start_time = time.time()
 
 data = pd.read_csv("../LAMAR BLVD.csv")
 
+data_lower_bound = 50000
+data_upper_bound = 52000
 
 # Normalisation des donnees entre -1 et 1 en utilisant la fonction MinMaxScaler de la librairie sklearn
 scaler = MinMaxScaler( feature_range=(-1, 1) )
-train_data_normalized = scaler.fit_transform( data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"].to_numpy().reshape(-1, 1) )
-train_data_normalized = train_data_normalized.reshape(1,-1)[0][50000 :55000]
+data_normalized = scaler.fit_transform( data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"].to_numpy().reshape(-1, 1) )
+data_normalized = data_normalized.reshape(1,-1)[0][data_lower_bound :data_upper_bound]
 
 # length of the window for training, it is the number of previous quarter-hours from which the net learns
 window_length = 4*24 # for one day
@@ -53,9 +55,9 @@ def createur_vecteur(sequence, pas):
     return seq
 
 
-radar_sequences = createur_vecteur( train_data_normalized, window_length )
+radar_sequences = createur_vecteur( data_normalized, window_length )
 # Obtention du training set et du test set a partir d'une fonction de sklearn
-train_seq, test_seq = train_test_split( radar_sequences, test_size=300 )
+train_seq, test_seq = train_test_split( radar_sequences, test_size=int((data_upper_bound - data_lower_bound)*0.3))
 
 # Shuffling the train set
 #train_seq = shuffle(train_seq, random_state=0)
@@ -123,7 +125,7 @@ print('Model creation took %s seconds' % (model_time-data_time) )
 Mise en place de la boucle d'apprentissage
 
 """
-num_epochs = 6
+num_epochs = 1
 
 
 # Lists for visualization of loss and accuracy
@@ -188,11 +190,22 @@ for epoch in range( num_epochs ):
 
 
 print('average test overall all test set took %s seconds' % ( sum(duration_test_list)/len(duration_test_list) ) )
-plt.plot( iteration_list, loss_list, color='r', label="Train loss" )
-plt.plot( iteration_list, errors_test_set_list, color='b', label="Test loss"  )
+plt.plot( iteration_list, loss_list, color='r', label='Train loss' )
+plt.plot( iteration_list, errors_test_set_list, color='b', label='Test loss'  )
+plt.legend(loc="upper right")
 plt.xlabel( "No. of Iteration" )
 plt.ylabel( "errors_test_set" )
 plt.title( "Iterations vs errors_test_set, batch size=%s, %s epochs, window of %s 1/4 hours, lr=%s" % ( batch_size, num_epochs, window_length, learning_rate ))
 plt.show()
+
+
+# Plot the forcasting of car flow after the chosen data:
+nb_days_predicted= 4
+data_normalized_realized = data_normalized.reshape(1,-1)[0][data_upper_bound-4*24*(nb_days_predicted+3) : data_upper_bound+4*24*nb_days_predicted]
+data_normalized_to_be_predicted = data_normalized.reshape(1,-1)[0][data_upper_bound : data_upper_bound+4*24*nb_days_predicted]
+data_predicted = []
+
+plt.plot()
+plt.plot()
 
 print("TOTAL took %s seconds" % (time.time() - start_time))
