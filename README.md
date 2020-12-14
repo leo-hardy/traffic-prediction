@@ -12,6 +12,8 @@ L'objectif est d'effectuer une prévision de traffic pour la ville d'Austin, à 
 *Note à l'intention de M.Cerisara : le nombre de commit de chacun de nous deux n'est pas forcément représentatif de nos travaux respectifs étant donné que nous avons travaillé et réfléchi à deux sur la même machine à de nombreux moments.*
 
 
+
+
 ## Sommaire
 
  - [Etat de l'art et motivation de l'approche choisie](#etat-de-l'art)
@@ -20,6 +22,9 @@ L'objectif est d'effectuer une prévision de traffic pour la ville d'Austin, à 
  - [Optimisation des hyperparamètres](#optimisation)
  - [Prédictions](#predictions)
  - [Pistes d'amélioration](#ameliorations)
+
+
+
 
 
 
