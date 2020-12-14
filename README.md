@@ -130,7 +130,7 @@ Pour réaliser les prédictions, nous avons mis en place une fonction "many-to-o
 
 Nous obtenons les résultats suivant:
 
-Pour un réseau entrainé sur le dataset **LAMAR_BLVD_SANDRA_MURAIDA_WAY**, nous retrouvons bien la périodicité journalière.
+Pour un réseau entrainé sur le dataset **LAMAR_BLVD_SANDRA_MURAIDA_WAY**, nous retrouvons bien la périodicité journalière. Au dela de la périodicité, nous constatons que le modèle bien que fonctionnant en *many-to-one* arrive à anticiper certaines irrégularités fortes à la sinusoïde comme aux abscisses 350 et 550.
 
 ![lamar_sept_2017_rough_datat](./images/LAMAR_BLVD_SANDRA_MURAIDA_WAY.png)
 
