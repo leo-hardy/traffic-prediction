@@ -126,7 +126,7 @@ L'ajout de couches n'a pas permis une amélioration des prédictions, les résul
 
 Pour réaliser les prédictions, nous avons mis en place une fonction "many-to-one". Par exemple, pour la prédiction du k-ième quart d'heure, nous avons au préalable prédit les k-ième quart d'heure précédent. Nous obtenons les résultats suivant:
 
-![lamar_sept_2017_rough_datat](./images/LAMAR_BLVD:SANDRA_MURAIDA_WAY.png)
+![lamar_sept_2017_rough_datat](./images/LAMAR_BLVD_SANDRA_MURAIDA_WAY.png)
 ![lamar_sept_2017_rough_datat](./images/CESAR_CHAVEZ_ST.png)
 
 
