@@ -34,12 +34,12 @@ start_time = time.time()
 data = pd.read_csv("../LAMAR BLVD.csv")
 
 data_lower_bound = 50000
-data_upper_bound = 52000
+data_upper_bound = 55000
 
 # Normalisation des donnees entre -1 et 1 en utilisant la fonction MinMaxScaler de la librairie sklearn
 scaler = MinMaxScaler( feature_range=(-1, 1) )
 data_normalized = scaler.fit_transform( data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"].to_numpy().reshape(-1, 1) )
-data_normalized = data_normalized.reshape(1,-1)[0][data_lower_bound :data_upper_bound]
+data_normalized_for_processing = data_normalized.reshape(1,-1)[0][data_lower_bound :data_upper_bound]
 
 # length of the window for training, it is the number of previous quarter-hours from which the net learns
 window_length = 4*24 # for one day
@@ -55,7 +55,7 @@ def createur_vecteur(sequence, pas):
     return seq
 
 
-radar_sequences = createur_vecteur( data_normalized, window_length )
+radar_sequences = createur_vecteur( data_normalized_for_processing, window_length )
 # Obtention du training set et du test set a partir d'une fonction de sklearn
 train_seq, test_seq = train_test_split( radar_sequences, test_size=int((data_upper_bound - data_lower_bound)*0.3))
 
@@ -201,11 +201,25 @@ plt.show()
 
 # Plot the forcasting of car flow after the chosen data:
 nb_days_predicted= 4
-data_normalized_realized = data_normalized.reshape(1,-1)[0][data_upper_bound-4*24*(nb_days_predicted+3) : data_upper_bound+4*24*nb_days_predicted]
+data_realized = data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"][data_upper_bound : data_upper_bound+4*24*nb_days_predicted].to_numpy()
 data_normalized_to_be_predicted = data_normalized.reshape(1,-1)[0][data_upper_bound : data_upper_bound+4*24*nb_days_predicted]
+
+radar_sequences_to_be_predicted = createur_vecteur( data_normalized_to_be_predicted, window_length )
+
 data_predicted = []
 
-plt.plot()
-plt.plot()
+for traffic_previous, traffic_real in radar_sequences_to_be_predicted:
+
+    traffic_previous, traffic_real = traffic_previous.to(device), traffic_real.to(device)
+
+    # we want int values for sales but we got [0, 1] values in nn
+    traffic_predicted = scaler.inverse_transform( net( traffic_previous ).detach().numpy() )
+    data_predicted.append(traffic_predicted[0][0])
+
+
+plt.plot([i for i in range(len(data_predicted))], data_predicted, color='r', label='Predicted' )
+plt.plot([i for i in range(len(data_realized))],data_realized, color='b', label='Realized' )
+plt.legend(loc="upper right")
+plt.show()
 
 print("TOTAL took %s seconds" % (time.time() - start_time))
