@@ -159,37 +159,4 @@ plt.title( "Iterations vs errors_test/train_set, batch size=%s, %s epochs, windo
 plt.show()
 
 
-# Plot the forcasting of car flow after the chosen data:
-nb_days_predicted = 10
-data_realized = data["LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)"][data_upper_bound : data_upper_bound+4*24*nb_days_predicted].to_numpy()
-data_normalized_to_be_predicted = data_normalized.reshape(1,-1)[0][data_upper_bound : data_upper_bound+4*24*nb_days_predicted]
-
-radar_sequences_to_be_predicted = createur_vecteur( data_normalized_to_be_predicted, window_length )
-
-data_predicted = []
-# Cette fenetre contient les valeurs prédites par le réseau
-current_window = radar_sequences_to_be_predicted[0][0]
-counter = 0
-for traffic_previous, traffic_real in radar_sequences_to_be_predicted:
-    traffic_previous, traffic_real = traffic_previous.to(device), traffic_real.to(device)
-    traffic_predi = net( traffic_previous ).detach()[0]
-    if counter < len(radar_sequences_to_be_predicted[0][0]):
-        current_window = torch.cat((current_window[1:],traffic_predi), 0)
-    else:
-        current_window = torch.cat((current_window,traffic_predi), 0)
-
-    # we want int values for sales but we got [0, 1] values in nn
-    traffic_predicted = scaler.inverse_transform( net( current_window ).detach().numpy() )
-    data_predicted.append(traffic_predicted[0][0])
-    counter =+ 1
-
-
-plt.plot([i for i in range(len(data_predicted))], data_predicted, color='r', label='Predicted' )
-plt.plot([i for i in range(len(data_predicted))],data_realized[0:len(data_predicted)], color='b', label='Realized' )
-plt.legend(loc="upper right")
-plt.xlabel( "No. of quater hours" )
-plt.ylabel( "Number of cars" )
-plt.title("Predictions Vs Reality on {} days".format(str(nb_days_predicted)))
-plt.show()
-
 print("TOTAL took %s seconds" % (time.time() - start_time))

@@ -86,7 +86,7 @@ C'est notamment pour éviter ce phénomène que le LSTM à fait son apparition. 
 
 Dans le cadre de notre projet, nous avons choisi de travailler avec un réseau LSTM "stateless". Ainsi, lorsque le réseau parcours une fenêtre, il ne conserve pas la valeur de la cellule cachée (hidden state), ni la valeur de la cellule d'état (cell state). Cette variante est possible car nous considérons que toutes les journées sont indépendantes les unes des autres (car nous avons finalement choisi de travailler avec une window de 24 heures).
 
-Enfin, l'avantage de travailler avec un LSTM stateless est qu'il nous laisse la possibilité de travailler simplement avec la technique de "mini-batch".  
+Enfin, l'avantage de travailler avec un LSTM stateless est qu'il nous laisse la possibilité de d'utiliser la technique de "mini-batch".  
 
 
 ## Optimisation des hyper-paramètres <a name="optimisation"></a>
@@ -94,7 +94,7 @@ Enfin, l'avantage de travailler avec un LSTM stateless est qu'il nous laisse la 
 ### batch size
 
 
-### learning rate <a name="learning-rate"></a>
+### Learning rate <a name="learning-rate"></a>
 
 Nous avons testé plusieurs learning rate allant de de 10E-1 à 10E-6. Nous avons trouvé une valeur optimale de XXXX pour notre apprentissage.
 
