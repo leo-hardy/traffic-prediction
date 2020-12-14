@@ -57,10 +57,9 @@ def createur_vecteur(sequence, pas):
 
 radar_sequences = createur_vecteur( data_normalized_for_processing, window_length )
 # Obtention du training set et du test set a partir d'une fonction de sklearn
-train_seq, test_seq = train_test_split( radar_sequences, test_size=int((data_upper_bound - data_lower_bound)*0.3))
+train_seq, test_seq = train_test_split( radar_sequences, test_size=50)
 
-# Shuffling the train set
-#train_seq = shuffle(train_seq, random_state=0)
+
 
 data_time = time.time()
 print('training and testing set preparation took %s seconds' % (data_time-start_time) )
@@ -114,11 +113,9 @@ net = LSTM()
 # Nous choisissons d'utiliser l'erreur quadratique moyenne comme criterion et l'optimize Adam (choix relativement arbitraire..)
 criterion = nn.MSELoss()
 
-<<<<<<< HEAD
+
 learning_rate = 0.001
-=======
-learning_rate = 1E-4
->>>>>>> 18b3f64323975e9ee86d07dc52627e0674dca7ee
+
 optimizer = torch.optim.Adam( net.parameters(), lr=learning_rate )
 
 model_time = time.time()
@@ -130,11 +127,7 @@ print('Model creation took %s seconds' % (model_time-data_time) )
 Mise en place de la boucle d'apprentissage
 
 """
-<<<<<<< HEAD
 num_epochs = 1
-=======
-num_epochs = 2
->>>>>>> 18b3f64323975e9ee86d07dc52627e0674dca7ee
 
 
 # Lists for visualization of loss and accuracy
@@ -168,11 +161,7 @@ for epoch in range( num_epochs ):
         count += 1
 
         # Testing the model every 100 iterations
-<<<<<<< HEAD
-        checkpoint = 300
-=======
         checkpoint = 200
->>>>>>> 18b3f64323975e9ee86d07dc52627e0674dca7ee
         if not ( count % checkpoint ):
             t1 = time.time()
             err = 0
@@ -218,14 +207,21 @@ data_normalized_to_be_predicted = data_normalized.reshape(1,-1)[0][data_upper_bo
 radar_sequences_to_be_predicted = createur_vecteur( data_normalized_to_be_predicted, window_length )
 
 data_predicted = []
-
+# Cette fenetre contient les valeurs prédites par le réseau
+current_window = radar_sequences_to_be_predicted[0][0]
+counter = 0
 for traffic_previous, traffic_real in radar_sequences_to_be_predicted:
-
     traffic_previous, traffic_real = traffic_previous.to(device), traffic_real.to(device)
+    traffic_predi = net( traffic_previous ).detach()[0]
+    if counter < len(radar_sequences_to_be_predicted[0][0]):
+        current_window = torch.cat((current_window[1:],traffic_predi),0)
+    else:
+        current_window = torch.cat((current_window,traffic_predi),0)
 
     # we want int values for sales but we got [0, 1] values in nn
-    traffic_predicted = scaler.inverse_transform( net( traffic_previous ).detach().numpy() )
+    traffic_predicted = scaler.inverse_transform( net( current_window ).detach().numpy() )
     data_predicted.append(traffic_predicted[0][0])
+    counter =+ 1
 
 
 plt.plot([i for i in range(len(data_predicted))], data_predicted, color='r', label='Predicted' )
