@@ -2,10 +2,6 @@
 
 Paul Lecomte, Léo Hardy
 
-![traffic](./images/background.jpg)
-*[Image : [Center for Information & Systems Engineering ](http://www.bu.edu/systems/2020/04/22/advancing-smart-cities-with-the-internet-of-cars/) ]*
-
-
 Ce git résume le projet effectué lors du [cours de Machine Learning de M.Cristophe Cerisara](https://members.loria.fr/CCerisara/#courses/machine_learning/).
 
 L'objectif est d'effectuer une prévision de traffic pour la ville d'Austin, à l'aide des données des radars de la ville, [disponibles sur ce challenge kaggle.](https://www.kaggle.com/vinayshanbhag/radar-traffic-data)
@@ -129,6 +125,9 @@ L'ajout de couches n'a pas permis une amélioration des prédictions, les résul
 ## Prédiction <a name="lstm"></a>
 
 Pour réaliser les prédictions, nous avons mis en place une fonction "many-to-one". Par exemple, pour la prédiction du k-ième quart d'heure, nous avons au préalable prédit les k-ième quart d'heure précédent. Nous obtenons les résultats suivant:
+
+![lamar_sept_2017_rough_datat](./images/LAMAR_BLVD:SANDRA_MURAIDA_WAY.png)
+![lamar_sept_2017_rough_datat](./images/CESAR_CHAVEZ_ST.png)
 
 
 ## Pistes d'amélioration <a name="ameliorations"></a>
