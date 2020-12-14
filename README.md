@@ -2,7 +2,7 @@
 
 Paul Lecomte, Léo Hardy
 ![background](./images/background.jpg)
-*[Images : [Center for Information & Systems Engineering](http://www.bu.edu/systems/2020/04/22/advancing-smart-cities-with-the-internet-of-cars/)]*
+*[Images : [Boston University Center for Information & Systems Engineering](http://www.bu.edu/systems/2020/04/22/advancing-smart-cities-with-the-internet-of-cars/)]*
 
 Ce git résume le projet effectué lors du [cours de Machine Learning de M.Cristophe Cerisara](https://members.loria.fr/CCerisara/#courses/machine_learning/).
 
