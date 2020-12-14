@@ -1,4 +1,3 @@
-import torch
 import torch.nn as nn
 import pandas as pd
 import torch.nn.functional as F
@@ -9,9 +8,12 @@ import matplotlib.pyplot as plt
 #from sklearn.utils import shuffle
 import time
 from model import LSTM
+from createur_vecteur import createur_vecteur
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+### STYLE DEFINITION ###
+plt.style.use('ggplot')
 
 """
 HYPERPARAMETERS:
@@ -47,13 +49,6 @@ window_length = 4*24 # for one day
 batch_size = 1
 print( 'hyperparameters : window_length = %s hours' % (window_length/4) )
 
-
-# Cette fonction permet de creer une fenetre de valeur avec le label associé.
-def createur_vecteur(sequence, pas):
-    seq=[]
-    for i in range(0,len(sequence)-pas-1):
-        seq.append((torch.FloatTensor(np.array([sequence[j] for j in range(i,i+pas)])),torch.FloatTensor(np.array(sequence[i+pas]))))
-    return seq
 
 
 radar_sequences = createur_vecteur( data_normalized_for_processing, window_length )
@@ -150,8 +145,8 @@ for epoch in range( num_epochs ):
 
 
 print('average test overall all test set took %s seconds' % ( sum(duration_test_list)/len(duration_test_list) ) )
-plt.plot( iteration_list, loss_list, color='r', label='Train loss' )
-plt.plot( iteration_list, errors_test_set_list, color='b', label='Test loss'  )
+plt.plot( iteration_list, loss_list, color='#32378D', label='Train loss' )
+plt.plot( iteration_list, errors_test_set_list, color='#FF761A', label='Test loss'  )
 plt.legend(loc="upper right")
 plt.xlabel( "No. of Iteration" )
 plt.ylabel( "errors" )

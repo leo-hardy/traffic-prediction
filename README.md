@@ -114,3 +114,7 @@ L'ajout de couches n'a pas permis une amélioration des prédictions, les résul
 - interpoler les données manquantes avec le réseau entraîné
 
 - apprendre sur plusieurs radars
+
+## Prédiction <a name="lstm"></a>
+
+Pour réaliser les prédictions, nous utilisons une fonction "many-to-one". Pour la prédiction du k-ième quart d'heure, nous avons au préalable prédit les k-ième quart d'heure précédent.

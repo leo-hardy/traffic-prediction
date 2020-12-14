@@ -4,8 +4,11 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import matplotlib.pyplot as plt
-from time_series_LSTM import createur_vecteur
+from createur_vecteur import createur_vecteur
 from model import LSTM
+
+### STYLE DEFINITION ###
+plt.style.use('ggplot')
 
 ### VARIABLES ###
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -52,8 +55,8 @@ for traffic_previous, traffic_real in radar_sequences_to_be_predicted:
 
 ### PLOT ###
 
-plt.plot([i for i in range(len(data_predicted))], data_predicted, color='r', label='Predicted' )
-plt.plot([i for i in range(len(data_predicted))],data_realized[0:len(data_predicted)], color='b', label='Realized' )
+plt.plot([i for i in range(len(data_predicted))],data_realized[0:len(data_predicted)], color='#32378D', label='Realized' )
+plt.plot([i for i in range(len(data_predicted))], data_predicted, color='#FF761A', label='Predicted' )
 plt.legend(loc="upper right")
 plt.xlabel( "No. of quater hours" )
 plt.ylabel( "Number of cars" )
