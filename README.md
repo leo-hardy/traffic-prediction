@@ -86,23 +86,34 @@ C'est notamment pour éviter ce phénomène que le LSTM à fait son apparition. 
 
 Dans le cadre de notre projet, nous avons choisi de travailler avec un réseau LSTM "stateless". Ainsi, lorsque le réseau parcours une fenêtre, il ne conserve pas la valeur de la cellule cachée (hidden state), ni la valeur de la cellule d'état (cell state). Cette variante est possible car nous considérons que toutes les journées sont indépendantes les unes des autres (car nous avons finalement choisi de travailler avec une window de 24 heures).
 
-Enfin, l'avantage de travailler avec un LSTM stateless est qu'il nous laisse la possibilité de d'utiliser la technique de "mini-batch".  
+Enfin, l'avantage de travailler avec un LSTM stateless est qu'il nous laisse la possibilité de travailler simplement avec la technique de "mini-batch".  
 
 
 ## Optimisation des hyper-paramètres <a name="optimisation"></a>
 
-### batch size
+### taille du minibatch
 
+Nous avons testé plusieurs tailles de minibatch (1, 2, 4, 8, 32, 50 et 132) afin d'étudier une éventuelle influence sur les résultats. Le meilleur résultat obtenu l'a été pour un minibatch de taille 1.
+En effet au mieux avec des batchs de taille plus grande nous obtenions une erreur sur nos set d'entraînement et de test qui plafonnait aux alentours de 60 (pour rappel la moyenne des données des voitures est de 322, l'écart-type de 247). Comme nous allons le voir par la suite avec un **batch de taille 1** nous avons obtenu une erreur allant en dessous.
 
-### Learning rate <a name="learning-rate"></a>
+Par exemple, voici un graph des erreurs pour un batch de taille 132 :
 
-Nous avons testé plusieurs learning rate allant de de 10E-1 à 10E-6. Nous avons trouvé une valeur optimale de XXXX pour notre apprentissage.
+![batch_132](./images/batch_132.png)
+
+*PS : en conséquence le code sur ce repository n'est pas configuré pour traiter avec des tailles de batchs autres que 1.*
+
+### learning rate <a name="learning-rate"></a>
+
+Nous avons testé plusieurs learning rate allant de de 10E-1 à 10E-6. Nous avons trouvé une valeur optimale de **10E-3** pour notre apprentissage. La valeur 10E-4 nous a permis d'obtenir des résultats similaires, mais nous avons privilégié 10E-3 car il permet une convergence plus rapide.
 
 ### Taille de la sliding window <a name="window"></a>
 
 Le modèle se base sur les n quart-d'heures précédant la valeur à prédire. Quel est la taille optimale de cette durée ?
 
-Après réflexion, nous pensons qu'il est plus judicieux de partir sur une fenêtre de 24 heures. D'une part, on peut faire l'hypothèse que les jours sont indépendants les uns des autres. D'autre part, le fait de prendre une fenêtre assez grande, nous permet d'utiliser les capacités de mémorisation du LSTM.
+A priori il nous a parru judicieux de partir sur une **fenêtre de 24 heures**, étant donné que le traffic observé à chaque radar a l'allure d'une sinusoïde de période 1. Esnuite, d'une part, on peut faire l'hypothèse que les jours sont indépendants les uns des autres. D'autre part, le fait de prendre une fenêtre assez grande, nous permet d'utiliser les capacités de mémorisation du LSTM.
+
+Néanmoins nous avons testé d'autres tailles : 1h, 2h, 3h, 12h, 2 jours ou 1 semaine notamment. Les résultats obtenus sur des fenêtres de taille inférieure a un jour n'ont pas été convaincants. Ceux pour une fenêtre de 2 ou 7 jours étaient légèrement moins bons et avaient pour conséquence un allongement des temps de calcul.
+
 
 ### nombre de couches denses
 
