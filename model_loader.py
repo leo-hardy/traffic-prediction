@@ -20,8 +20,8 @@ data_upper_bound = 55000
 my_radar = 'LAMAR BLVD / SANDRA MURAIDA WAY (Lamar Bridge)'
 data = pd.read_csv("../LAMAR BLVD.csv")
 
-# my_radar = '700 BLK E CESAR CHAVEZ ST'
-# data = pd.read_csv("./CESAR CHAVEZ.csv")
+#my_radar = '700 BLK E CESAR CHAVEZ ST'
+#data = pd.read_csv("../CESAR CHAVEZ.csv")
 
 
 ### LOAD MODEL ###
