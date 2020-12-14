@@ -85,6 +85,7 @@ class LSTM(nn.Module):
         # définition de la couche dense en sortie du module LSTM
         self.fc1 = nn.Linear( in_features=self.hidden_layer_size, out_features=1)
 
+
         self.hidden_cell = (
             torch.zeros( 1, 1, self.hidden_layer_size ),
             torch.zeros( 1, 1, self.hidden_layer_size )
@@ -113,7 +114,11 @@ net = LSTM()
 # Nous choisissons d'utiliser l'erreur quadratique moyenne comme criterion et l'optimize Adam (choix relativement arbitraire..)
 criterion = nn.MSELoss()
 
+<<<<<<< HEAD
 learning_rate = 0.001
+=======
+learning_rate = 1E-4
+>>>>>>> 18b3f64323975e9ee86d07dc52627e0674dca7ee
 optimizer = torch.optim.Adam( net.parameters(), lr=learning_rate )
 
 model_time = time.time()
@@ -125,7 +130,11 @@ print('Model creation took %s seconds' % (model_time-data_time) )
 Mise en place de la boucle d'apprentissage
 
 """
+<<<<<<< HEAD
 num_epochs = 1
+=======
+num_epochs = 2
+>>>>>>> 18b3f64323975e9ee86d07dc52627e0674dca7ee
 
 
 # Lists for visualization of loss and accuracy
@@ -159,7 +168,11 @@ for epoch in range( num_epochs ):
         count += 1
 
         # Testing the model every 100 iterations
+<<<<<<< HEAD
         checkpoint = 300
+=======
+        checkpoint = 200
+>>>>>>> 18b3f64323975e9ee86d07dc52627e0674dca7ee
         if not ( count % checkpoint ):
             t1 = time.time()
             err = 0
@@ -184,8 +197,6 @@ for epoch in range( num_epochs ):
             print("Iteration: {}, errors_test_set: {} /(quarter hour)".format( count, errors_test_set ))
             loss_list.append( np.true_divide( loss_denormalized_sum.detach().numpy() , checkpoint ) )
             loss_denormalized_sum = 0
-            print("Error loss on test set: {}".format(loss.item()))
-
 
 
 
